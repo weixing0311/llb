@@ -1,0 +1,120 @@
+//
+//  PrefixHeader.pch
+//  LLB
+//
+//  Created by iOSdeveloper on 2018/9/13.
+//  Copyright © 2018年 -call Me WeiXing. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+
+
+
+#define kMyBaseUrl @"http://m.zainagou.com/"
+
+
+
+
+
+#import "MJRefresh.h"
+#import "AppDelegate.h"
+#import "BaseViewController.h"
+#import "BaseWebViewController.h"
+#import "BaseSerVice.h"
+#import "UserModel.h"
+#import "WXApi.h"
+#import "WXApiObject.h"
+
+
+
+
+
+
+
+#import "AFNetworking.h"
+#import "SVProgressHUD.h"
+#import "UserModel.h"
+
+
+
+
+#pragma  mark ---category---------
+
+#import "UIImageView+WebCache.h"
+#import "UIButton+WebCache.h"
+#import "UIView+LayerCustom.h"
+#import "NSArray+Extension.h"
+#import "NSDictionary+Extension.h"
+#import "NSDate+Utilities.h"
+#import "NSMutableDictionary+JFASafeObject.h"
+#import "NSString+JFAExtend.h"
+#import "NSString+TimeLabel.h"
+#import "NSString+Password.h"
+#import "UIColor+JFAExtend.h"
+#import "UIImage+Extension.h"
+#import "UIImage+LocalImage.h"
+#import "UIImage+scal.h"
+#import "UIImageView+Round.h"
+#import "UIView+Board.h"
+#import "UIView+JFAViewAnimation.h"
+#import "NSDate+CustomDate.h"
+#import "NSString+dateWithString.h"
+#import "BaseSerVice.h"
+#import "NSDictionary+JFASafeObject.h"
+#import "SDAutoLayout.h"
+#import "NSString+RSA.h"
+////hex 颜色
+#define HEXCOLOR(hex) [UIColor colorWithRed:((float)((hex & 0xFF0000) >> 16)) / 255.0 green:((float)((hex & 0xFF00) >> 8)) / 255.0 blue:((float)(hex & 0xFF)) / 255.0 alpha:1]
+////获取image
+#define getImage(image) [UIImage imageNamed:image]
+
+
+
+#define width(view) view.frame.size.width
+#define height(view) view.frame.size.height
+#define x(view) view.frame.origin.x
+#define y(view) view.frame.origin.y
+
+
+
+#ifdef DEBUG
+#define DLog(...) NSLog(@"%s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__])
+#define ALog(...) [[NSAssertionHandler currentHandler] handleFailureInFunction:[NSString stringWithCString:__PRETTY_FUNCTION__ encoding:NSUTF8StringEncoding] file:[NSString stringWithCString:__FILE__ encoding:NSUTF8StringEncoding] lineNumber:__LINE__ description:__VA_ARGS__]
+#else
+#define DLog(...) do { } while (0)
+#endif
+
+#define RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
+
+#define RGBACOLOR(r,g,b,a) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:(a)]
+
+#define JFA_SCREEN_WIDTH  [UIScreen mainScreen].bounds.size.width
+
+#define JFA_SCREEN_HEIGHT  [UIScreen mainScreen].bounds.size.height
+
+#define SEGMENTED_BAR_HEIGHT 53
+
+#define AI_MAIN_BLUECOLOR [UIColor colorWithRed:0x3d / 255.0f green:0xb9 / 255.0f blue:0xec / 255.0f alpha:1]
+#define AI_MAIN_DARK_BLUECOLOR [UIColor colorWithRed:0x00 / 255.0f green:0x66 / 255.0f blue:0x99 / 255.0f alpha:1]
+
+
+
+
+#define NLSystemVersionGreaterOrEqualThan(version) ([[[UIDevice currentDevice] systemVersion] floatValue] >= version)
+
+#define IOS7_OR_LATER NLSystemVersionGreaterOrEqualThan(7.0)
+
+#define IOS8_OR_LATER NLSystemVersionGreaterOrEqualThan(8.0)
+
+#define IOS81_OR_LATER NLSystemVersionGreaterOrEqualThan(8.1)
+#define IOS9_OR_LATER NLSystemVersionGreaterOrEqualThan(9.0)
+#define NLSystemVersionLowerOrEqualThan(version) ([[[UIDevice currentDevice] systemVersion] floatValue] < version)
+#define IOS6_EARLY NLSystemVersionLowerOrEqualThan(6.0)
+
+
+#endif /* PrefixHeader_pch */
