@@ -27,8 +27,11 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="秒杀" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="69F-zG-zMW">
-                        <rect key="frame" x="10" y="241" width="29" height="17"/>
+                        <rect key="frame" x="10" y="241" width="30" height="17"/>
                         <color key="backgroundColor" red="0.99840973980000003" green="0.070033561379999998" blue="0.0971664899" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="30" id="XvR-75-zva"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
@@ -40,18 +43,29 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="￥198.0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qUG-jd-3Cr">
-                        <rect key="frame" x="10" y="284.5" width="53.5" height="18"/>
+                        <rect key="frame" x="10" y="274.5" width="53.5" height="18"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" red="0.99840973980000003" green="0.070033561379999998" blue="0.0971664899" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q5c-XX-bzW">
-                        <rect key="frame" x="171" y="278" width="50" height="30"/>
+                        <rect key="frame" x="171" y="268" width="50" height="30"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="50" id="SAM-bb-jkF"/>
                             <constraint firstAttribute="height" constant="30" id="kqD-rY-SPt"/>
                         </constraints>
-                        <state key="normal" title="购买"/>
+                        <state key="normal" title="购买">
+                            <color key="titleColor" red="0.99840973980000003" green="0.070033561379999998" blue="0.0971664899" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                <integer key="value" value="15"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
+                                <color key="value" red="0.99718432741116747" green="0.11325346250199082" blue="0.084986143734809186" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                         <connections>
                             <action selector="didbuy:" destination="gTV-IL-0wX" eventType="touchUpInside" id="o7S-hb-6cB"/>
                         </connections>
@@ -65,7 +79,7 @@
                 <constraint firstItem="yU2-rI-0vW" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="F9s-a7-I1Z"/>
                 <constraint firstItem="Q5c-XX-bzW" firstAttribute="centerY" secondItem="qUG-jd-3Cr" secondAttribute="centerY" id="FI8-Sd-Fbq"/>
                 <constraint firstItem="qUG-jd-3Cr" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="10" id="NFk-RJ-5pc"/>
-                <constraint firstItem="qUG-jd-3Cr" firstAttribute="top" secondItem="9BF-Q6-clk" secondAttribute="bottom" constant="10" id="Pe3-1K-IOK"/>
+                <constraint firstItem="qUG-jd-3Cr" firstAttribute="top" secondItem="9BF-Q6-clk" secondAttribute="bottom" id="Pe3-1K-IOK"/>
                 <constraint firstItem="69F-zG-zMW" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="10" id="Raf-RI-hqF"/>
                 <constraint firstItem="yU2-rI-0vW" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="TWz-hL-vri"/>
                 <constraint firstItem="69F-zG-zMW" firstAttribute="top" secondItem="yU2-rI-0vW" secondAttribute="bottom" constant="10" id="VMK-uY-iZK"/>

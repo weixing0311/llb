@@ -12,6 +12,8 @@
 #import "PublicGoodsCell.h"
 #import "HomeAdCell.h"
 #import "HomeTitleCell.h"
+#import "GoodsDetailViewController.h"
+#import "SearchResultViewController.h"
 @interface HomePageViewController ()
 <ADCarouselViewDelegate,
 UICollectionViewDelegate,
@@ -47,11 +49,10 @@ UICollectionViewDelegateFlowLayout>
     
     self.view.backgroundColor = [UIColor redColor];
     [self buildCollectionView];
+    [self setRefrshWithCollectionView:self.collectionView];
     [self getBannerInfo];
-    [self getADInfo];
     [self getRoldInfo];
     [self getDataInfo];
-    
     // Do any additional setup after loading the view.
 }
 
@@ -63,74 +64,39 @@ UICollectionViewDelegateFlowLayout>
     NSMutableDictionary * params =[NSMutableDictionary dictionary];
     [params safeSetObject:@"1" forKey:@"bannerType"];
     [[BaseSerVice sharedManager]post:@"api/news/querySellerBannerList.do" paramters:params success:^(NSDictionary *dic) {
+        [self.collectionView.mj_header endRefreshing];
+
+        NSDictionary * dataDic =[dic safeObjectForKey:@"data"];
         
         [self.bannerArray removeAllObjects];
-        [self.bannerArray addObjectsFromArray:[[dic safeObjectForKey:@"data"]objectForKey:@"array"]];
-        [self.collectionView reloadData];
-        
-        /*
-         
-         : [{
-         "imgUrl": "http://image.zainagou.com/images/productPicture/14661.jpg", //图片全路径
-         "id": 1,    //ID
-         "createTime": "",
-         "pathUrl": "12",  //跳转路径
-         "sort": 1,   //排序
-         "updateTime": "2018-08-30 17:48:11",
-         "bannerType": 1,
-         "name": "123",    //轮播图名称
-         "operaterName": "",
-         "operaterID": "",
-         "isValid": 0
-         }]
-
-         */
-        
-    } failure:^(NSError *error) {
-        
-    }];
-
-}
-///查看广告
--(void)getADInfo
-{
-    NSMutableDictionary * params =[NSMutableDictionary dictionary];
-    [params safeSetObject:@"2" forKey:@"bannerType"];
-    [[BaseSerVice sharedManager]post:@"api/news/querySellerBannerList.do" paramters:params success:^(NSDictionary *dic) {
-        
+        [self.titleArray removeAllObjects];
         [self.adArray removeAllObjects];
-        [self.adArray addObjectsFromArray:[[dic safeObjectForKey:@"data"]safeObjectForKey:@"array"]];
+
+        
+        [self.bannerArray addObjectsFromArray:[dataDic safeObjectForKey:@"lunboArray"]];
+        [self.titleArray addObjectsFromArray:[dataDic safeObjectForKey:@"juzhengArray"]];
+        [self.adArray addObjectsFromArray:[dataDic safeObjectForKey:@"guanggaoArray"]];
+
+        
+        
+        
         [self.collectionView reloadData];
         
-        /*
-         
-         : [{
-         "imgUrl": "http://image.zainagou.com/images/productPicture/14661.jpg", //图片全路径
-         "id": 1,    //ID
-         "createTime": "",
-         "pathUrl": "12",  //跳转路径
-         "sort": 1,   //排序
-         "updateTime": "2018-08-30 17:48:11",
-         "bannerType": 1,
-         "name": "123",    //轮播图名称
-         "operaterName": "",
-         "operaterID": "",
-         "isValid": 0
-         }]
-         
-         */
-        
     } failure:^(NSError *error) {
-        
+        [self.collectionView.mj_header endRefreshing];
+
     }];
 
 }
+
 
 ///查看滚动消息
 -(void)getRoldInfo
 {
     [[BaseSerVice sharedManager]post:@"api/news/queryRollingNewsList.do" paramters:nil success:^(NSDictionary *dic) {
         [self.notifiArray addObjectsFromArray:[[dic safeObjectForKey:@"data"]safeObjectForKey:@"array"]];
+        
+        
         [self.collectionView reloadData];
 
         /*
@@ -153,28 +119,31 @@ UICollectionViewDelegateFlowLayout>
         
     } failure:^(NSError *error) {
         
+        [self.notifiArray removeAllObjects];
+        [self.collectionView reloadData];
+        DLog(@"error-%@",error.userInfo);
     }];
 
 }
 
--(void)getAllUnReadNotificationInfo
-{
-    NSMutableDictionary * params =[NSMutableDictionary dictionary];
-    [params safeSetObject:[UserModel shareInstance].userId  forKey:@"userId"];
-
-    [[BaseSerVice sharedManager]post:@"api/news/queryRollingNewsList.do" paramters:nil success:^(NSDictionary *dic) {
-        self.notifacationCount = [[[dic safeObjectForKey:@"data"]objectForKey:@"count"]integerValue];
-        /*
-         
-         "count": 200   //数量
-
-         */
-        
-    } failure:^(NSError *error) {
-        
-    }];
-
-}
+//-(void)getAllUnReadNotificationInfo
+//{
+//    NSMutableDictionary * params =[NSMutableDictionary dictionary];
+//    [params safeSetObject:[UserModel shareInstance].userId  forKey:@"userId"];
+//
+//    [[BaseSerVice sharedManager]post:@"api/news/queryRollingNewsList.do" paramters:nil success:^(NSDictionary *dic) {
+//        self.notifacationCount = [[[dic safeObjectForKey:@"data"]objectForKey:@"count"]integerValue];
+//        /*
+//
+//         "count": 200   //数量
+//
+//         */
+//
+//    } failure:^(NSError *error) {
+//
+//    }];
+//
+//}
 -(void)getDataInfo
 {
     
@@ -182,7 +151,7 @@ UICollectionViewDelegateFlowLayout>
     [params safeSetObject:[UserModel shareInstance].userId  forKey:@"userId"];
     
     [[BaseSerVice sharedManager]post:@"api/product/queryProductHotList.do" paramters:nil success:^(NSDictionary *dic) {
-        
+        [self.collectionView.mj_header endRefreshing];
         NSArray * arr =[[dic safeObjectForKey:@"data"]safeObjectForKey:@"array"];
         
         [self.dataArray addObjectsFromArray:arr];
@@ -190,7 +159,8 @@ UICollectionViewDelegateFlowLayout>
         
         
     } failure:^(NSError *error) {
-        
+        [self.collectionView.mj_header endRefreshing];
+
     }];
 
 }
@@ -229,7 +199,6 @@ UICollectionViewDelegateFlowLayout>
 {
     [self getDataInfo];
     [self getBannerInfo];
-    [self getADInfo];
     [self getRoldInfo];
 }
 
@@ -256,7 +225,7 @@ UICollectionViewDelegateFlowLayout>
             return self.titleArray.count;
             break;
         case 1:
-            return 1;
+            return self.notifiArray.count;
             break;
         case 2:
             return self.adArray.count;
@@ -267,7 +236,6 @@ UICollectionViewDelegateFlowLayout>
             break;
     }
     
-    return self.dataArray.count;
 }
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
@@ -295,7 +263,9 @@ UICollectionViewDelegateFlowLayout>
 
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
-    
+    if (section ==0) {
+        return UIEdgeInsetsMake(10, 10, 10, 10);
+    }else
     return UIEdgeInsetsMake(5, 5, 5, 5);//分别为上、左、下、右
 }
 
@@ -306,8 +276,8 @@ UICollectionViewDelegateFlowLayout>
         NSDictionary * dict = [self.titleArray objectAtIndex:indexPath.row];
         HomeTitleCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"HomeTitleCell" forIndexPath:indexPath];
         cell.backgroundColor = [UIColor whiteColor];
-        [cell.img sd_setImageWithURL:[NSURL URLWithString:[dict safeObjectForKey:@"defPicture"]] placeholderImage:getImage(@"logo_")];
-        cell.titlelb .text = [dict safeObjectForKey:@"productName"];
+        [cell.img sd_setImageWithURL:[NSURL URLWithString:[dict safeObjectForKey:@"imgUrl"]] placeholderImage:getImage(@"default_")];
+        cell.titlelb .text = [dict safeObjectForKey:@"name"];
         return cell;
         
     }
@@ -322,10 +292,10 @@ UICollectionViewDelegateFlowLayout>
     }
     else if (indexPath.section ==2)
     {
-        NSDictionary * dict = [self.dataArray objectAtIndex:indexPath.row];
+        NSDictionary * dict = [self.adArray objectAtIndex:indexPath.row];
         HomePageHeadCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"HomePageHeadCell" forIndexPath:indexPath];
         cell.backgroundColor = [UIColor whiteColor];
-        [cell.goodsImg sd_setImageWithURL:[NSURL URLWithString:[dict safeObjectForKey:@"defPicture"]] placeholderImage:getImage(@"logo_")];
+        [cell.goodsImg sd_setImageWithURL:[NSURL URLWithString:[dict safeObjectForKey:@"imgUrl"]] placeholderImage:getImage(@"banner_default_")];
         return cell;
         
     }
@@ -333,8 +303,25 @@ UICollectionViewDelegateFlowLayout>
         NSDictionary * dict = [self.dataArray objectAtIndex:indexPath.row];
         PublicGoodsCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"PublicGoodsCell" forIndexPath:indexPath];
         cell.backgroundColor = [UIColor whiteColor];
-        [cell.goodsImg sd_setImageWithURL:[NSURL URLWithString:[dict safeObjectForKey:@"defPicture"]] placeholderImage:getImage(@"logo_")];
-        cell.goodstitlelb .text = [dict safeObjectForKey:@"productName"];
+        [cell.goodsImg sd_setImageWithURL:[NSURL URLWithString:[dict safeObjectForKey:@"defPicture"]] placeholderImage:getImage(@"default_")];
+        
+        cell.goodsStatelb.text = [dict safeObjectForKey:@"hotName"];
+        
+        
+        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        // 对齐方式
+        style.alignment = NSTextAlignmentJustified;
+        // 首行缩进
+        style.firstLineHeadIndent = 30.0f;
+        // 头部缩进
+        style.headIndent = 10.0f;
+        // 尾部缩进
+        style.tailIndent = -10.0f;
+        NSAttributedString *attrText = [[NSAttributedString alloc] initWithString:[dict safeObjectForKey:@"productName"] attributes:@{ NSParagraphStyleAttributeName : style}];
+        cell.goodstitlelb.attributedText = attrText;
+        
+        
+        
         cell.pricelb.text = [NSString stringWithFormat:@"￥%.1f",[[dict safeObjectForKey:@"productPrice"]doubleValue]];
         return cell;
         
@@ -345,7 +332,7 @@ UICollectionViewDelegateFlowLayout>
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section==0) {
-        return CGSizeMake((JFA_SCREEN_WIDTH-20)/4-10, (JFA_SCREEN_WIDTH-20)/4);
+        return CGSizeMake((JFA_SCREEN_WIDTH-20)/4-10, (JFA_SCREEN_WIDTH-20)/4-10);
     }
     else if (indexPath.section==1)
     {
@@ -353,10 +340,10 @@ UICollectionViewDelegateFlowLayout>
     }
     else if (indexPath.section==2)
     {
-        return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2/0.68);
+        return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2/1.45);
     }
     
-    return CGSizeMake((JFA_SCREEN_WIDTH-20)/2-10, (JFA_SCREEN_WIDTH-20)/2+60);
+    return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2+80);
 }
 //这个是两行cell之间的间距（上下行cell的间距）
 
@@ -374,6 +361,46 @@ UICollectionViewDelegateFlowLayout>
 {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
     
+    if (indexPath.section ==0) {
+        NSDictionary * dic = [self.titleArray objectAtIndex:indexPath.row];
+        GoodsDetailViewController * gs = [[GoodsDetailViewController alloc]init];
+        gs.hidesBottomBarWhenPushed = YES;
+        
+        NSString * url =[[dic safeObjectForKey:@"pathUrl"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] ;
+        gs.urlStr = url;
+        [self.navigationController pushViewController:gs animated:YES];
+
+    }
+    else if (indexPath.section ==1)
+    {
+        
+    }
+    else if (indexPath.section ==2)
+    {
+        NSDictionary * dic = [self.adArray objectAtIndex:indexPath.row];
+        GoodsDetailViewController * gs = [[GoodsDetailViewController alloc]init];
+        gs.hidesBottomBarWhenPushed = YES;
+        
+        NSString * url =[[dic safeObjectForKey:@"pathUrl"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] ;
+        gs.urlStr = url;
+        [self.navigationController pushViewController:gs animated:YES];
+
+    }
+    else
+    {
+        NSDictionary * dic = [self.dataArray objectAtIndex:indexPath.row];
+        GoodsDetailViewController * gs = [[GoodsDetailViewController alloc]init];
+        gs.hidesBottomBarWhenPushed = YES;
+        
+        NSString * timeStr = [NSString getNowTimeTimestamp3];
+        NSString * productId = [dic safeObjectForKey:@"productNO"];
+        NSString * url = [NSString stringWithFormat:@"app/commodity.html?t=%@&productId=%@",timeStr,productId];
+        gs.urlStr = url;
+        [self.navigationController pushViewController:gs animated:YES];
+    }
+
+    
+
 }
 
 
@@ -396,7 +423,16 @@ UICollectionViewDelegateFlowLayout>
             adCar = [ADCarouselView carouselViewWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, JFA_SCREEN_WIDTH/2)];
             adCar.loop = YES;
             adCar.delegate = self;
-            adCar.imgs = @[@"test1",@"test1",@"test1",@"test1",@"test1",@"test1"];
+            
+            NSMutableArray * imgArr = [NSMutableArray array];
+            for (int i =0; i<self.bannerArray.count; i++) {
+                NSDictionary * dic = [self.bannerArray objectAtIndex:i];
+                NSString *img = [dic safeObjectForKey:@"imgUrl"];
+                [imgArr addObject:img];
+            }
+            
+            
+            adCar.imgs = imgArr;
             adCar.automaticallyScrollDuration = 5;
             adCar.placeholderImage = [UIImage imageNamed:@"logo_"];
             [headView addSubview:adCar];
@@ -404,15 +440,15 @@ UICollectionViewDelegateFlowLayout>
             
             
             UIView * searchView = [UIView new];
-            searchView.frame = CGRectMake(20,20 , JFA_SCREEN_WIDTH-40-40, 40);
+            searchView.frame = CGRectMake(10,20 , JFA_SCREEN_WIDTH-40-40, 35);
             searchView.backgroundColor = [UIColor whiteColor];
             searchView.layer.masksToBounds = YES;
-            searchView.layer.cornerRadius =20;
+            searchView.layer.cornerRadius =17.5;
 
             [headView addSubview:searchView];
 
             
-            UIImageView * imgV = [[UIImageView alloc]initWithFrame:CGRectMake(20, 10, 20, 20)];
+            UIImageView * imgV = [[UIImageView alloc]initWithFrame:CGRectMake(10, 7.5, 20, 20)];
             imgV.image = getImage(@"search_logo");
             [searchView addSubview:imgV];
             
@@ -421,15 +457,15 @@ UICollectionViewDelegateFlowLayout>
             
             
             UIButton * searchBtn = [UIButton new];
-            searchBtn.frame = CGRectMake(10,20 , JFA_SCREEN_WIDTH-70, 40);
+            searchBtn.frame = CGRectMake(10,20 , JFA_SCREEN_WIDTH-70, 35);
             [searchBtn addTarget:self action:@selector(didSearch) forControlEvents:UIControlEventTouchUpInside];
             [searchView addSubview:searchBtn];
             
             UIButton * msgBtn = [UIButton new];
         
-            msgBtn.frame = CGRectMake(JFA_SCREEN_WIDTH-50,20 , 40, 40);
-            searchView.layer.masksToBounds = YES;
-            searchView.layer.cornerRadius =20;
+            msgBtn.frame = CGRectMake(JFA_SCREEN_WIDTH-50,20 , 35, 35);
+            msgBtn.layer.masksToBounds = YES;
+            msgBtn.layer.cornerRadius =17.5;
 
             [msgBtn addTarget:self action:@selector(showMsg) forControlEvents:UIControlEventTouchUpInside];
             msgBtn.backgroundColor = RGBACOLOR(225/225.0f, 225/225.0f, 225/225.0f, 0.6);
@@ -456,18 +492,6 @@ UICollectionViewDelegateFlowLayout>
     }
     return nil;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -517,8 +541,17 @@ UICollectionViewDelegateFlowLayout>
 -(void)didSearch
 {
     DLog(@"showSearch");
+    SearchResultViewController * se =[[SearchResultViewController alloc]init];
+    [self.navigationController pushViewController:se animated:YES];
 }
-
+- (void)carouselView:(ADCarouselView *)carouselView didSelectItemAtIndex:(NSInteger)didSelectItemAtIndex
+{
+    NSDictionary * dic = [self.bannerArray objectAtIndex:didSelectItemAtIndex-1];
+    GoodsDetailViewController * gs = [[GoodsDetailViewController alloc]init];
+    gs.hidesBottomBarWhenPushed = YES;
+    gs.urlStr = [[dic safeObjectForKey:@"pathUrl"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    [self.navigationController pushViewController:gs animated:YES];
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

@@ -25,6 +25,9 @@
 		6C2113C72150D43A0007CDE5 /* HomeTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C2113C52150D43A0007CDE5 /* HomeTitleCell.m */; };
 		6C2113C82150D43A0007CDE5 /* HomeTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C2113C62150D43A0007CDE5 /* HomeTitleCell.xib */; };
 		6C2115F92154E9410007CDE5 /* AgreeMentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C2115F82154E9410007CDE5 /* AgreeMentViewController.m */; };
+		6C2115FC2159CC4E0007CDE5 /* GoodsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C2115FB2159CC4E0007CDE5 /* GoodsDetailViewController.m */; };
+		6C211601215A09B90007CDE5 /* SearchResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C2115FF215A09B90007CDE5 /* SearchResultViewController.m */; };
+		6C211602215A09B90007CDE5 /* SearchResultViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C211600215A09B90007CDE5 /* SearchResultViewController.xib */; };
 		6CABCA312149F221008A966F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CABCA302149F221008A966F /* AppDelegate.m */; };
 		6CABCA392149F221008A966F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CABCA382149F221008A966F /* Assets.xcassets */; };
 		6CABCA3C2149F221008A966F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6CABCA3A2149F221008A966F /* LaunchScreen.storyboard */; };
@@ -120,6 +123,11 @@
 		6C2113C62150D43A0007CDE5 /* HomeTitleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeTitleCell.xib; sourceTree = "<group>"; };
 		6C2115F72154E9410007CDE5 /* AgreeMentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AgreeMentViewController.h; sourceTree = "<group>"; };
 		6C2115F82154E9410007CDE5 /* AgreeMentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AgreeMentViewController.m; sourceTree = "<group>"; };
+		6C2115FA2159CC4E0007CDE5 /* GoodsDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GoodsDetailViewController.h; sourceTree = "<group>"; };
+		6C2115FB2159CC4E0007CDE5 /* GoodsDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoodsDetailViewController.m; sourceTree = "<group>"; };
+		6C2115FE215A09B90007CDE5 /* SearchResultViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResultViewController.h; sourceTree = "<group>"; };
+		6C2115FF215A09B90007CDE5 /* SearchResultViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResultViewController.m; sourceTree = "<group>"; };
+		6C211600215A09B90007CDE5 /* SearchResultViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchResultViewController.xib; sourceTree = "<group>"; };
 		6CABCA2C2149F221008A966F /* LLB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LLB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CABCA2F2149F221008A966F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6CABCA302149F221008A966F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -289,8 +297,20 @@
 				6C2113A8214BB8A90007CDE5 /* PublicGoodsCell.h */,
 				6C2113A9214BB8A90007CDE5 /* PublicGoodsCell.m */,
 				6C2113AA214BB8A90007CDE5 /* PublicGoodsCell.xib */,
+				6C2115FA2159CC4E0007CDE5 /* GoodsDetailViewController.h */,
+				6C2115FB2159CC4E0007CDE5 /* GoodsDetailViewController.m */,
 			);
 			path = public;
+			sourceTree = "<group>";
+		};
+		6C2115FD215A09A10007CDE5 /* searchView */ = {
+			isa = PBXGroup;
+			children = (
+				6C2115FE215A09B90007CDE5 /* SearchResultViewController.h */,
+				6C2115FF215A09B90007CDE5 /* SearchResultViewController.m */,
+				6C211600215A09B90007CDE5 /* SearchResultViewController.xib */,
+			);
+			path = searchView;
 			sourceTree = "<group>";
 		};
 		6CABCA232149F221008A966F = {
@@ -320,6 +340,7 @@
 				6CABCA8F2149F59B008A966F /* FirstTabbarViewController.m */,
 				6CABCA912149F5A6008A966F /* SecondTabbarViewController.h */,
 				6CABCA922149F5A6008A966F /* SecondTabbarViewController.m */,
+				6C2115FD215A09A10007CDE5 /* searchView */,
 				6C2113A7214BB88C0007CDE5 /* public */,
 				6CABCAB0214A45BA008A966F /* shopCar */,
 				6CABCAA12149F850008A966F /* loign */,
@@ -635,6 +656,7 @@
 				6CABCAAC214A3FCA008A966F /* MobileLoignViewController.xib in Resources */,
 				6CABCA392149F221008A966F /* Assets.xcassets in Resources */,
 				6C2113AC214BB8A90007CDE5 /* PublicGoodsCell.xib in Resources */,
+				6C211602215A09B90007CDE5 /* SearchResultViewController.xib in Resources */,
 				6C2113B1214BBA180007CDE5 /* HomePageHeadCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -703,6 +725,7 @@
 			files = (
 				6CABCAC9214A49AE008A966F /* BaseViewController.m in Sources */,
 				6CABCACA214A49AE008A966F /* BaseWebViewController.m in Sources */,
+				6C211601215A09B90007CDE5 /* SearchResultViewController.m in Sources */,
 				6CABCACB214A49AE008A966F /* UIView+JFAViewAnimation.m in Sources */,
 				6CABCACC214A49AE008A966F /* NSString+JFAExtend.m in Sources */,
 				6CABCACD214A49AE008A966F /* UIColor+JFAExtend.m in Sources */,
@@ -725,6 +748,7 @@
 				6C2113BE2150A1E00007CDE5 /* ClassInofoModel.m in Sources */,
 				6CABCADA214A49AE008A966F /* NSDictionary+Extension.m in Sources */,
 				6C2113B0214BBA180007CDE5 /* HomePageHeadCell.m in Sources */,
+				6C2115FC2159CC4E0007CDE5 /* GoodsDetailViewController.m in Sources */,
 				6C2113AB214BB8A90007CDE5 /* PublicGoodsCell.m in Sources */,
 				6C2113B621508D3D0007CDE5 /* BaseLoignViewController.m in Sources */,
 				6CABCADB214A49AE008A966F /* NSDate+CustomDate.m in Sources */,

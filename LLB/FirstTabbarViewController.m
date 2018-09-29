@@ -12,7 +12,7 @@
 #import "MineViewController.h"
 #import "ShopCarViewController.h"
 #import "LoignViewController.h"
-@interface FirstTabbarViewController ()
+@interface FirstTabbarViewController ()<UITabBarControllerDelegate>
 
 @end
 
@@ -31,19 +31,19 @@
     UINavigationController * nav2 = [[UINavigationController alloc]initWithRootViewController:cs];
     cs.title = @"分类";
     
-    
+    self.delegate = self;
     
     
     
     ShopCarViewController * shopCar = [[ShopCarViewController alloc]init];
     
     UINavigationController * nav4 = [[UINavigationController alloc]initWithRootViewController:shopCar];
-    shopCar.urlStr = @"";
+    shopCar.urlStr = @"app/shopCard.html";
     shopCar.title = @"购物车";
     
     MineViewController * mine = [[MineViewController alloc]init];
     UINavigationController * nav5 = [[UINavigationController alloc]initWithRootViewController:mine];
-    mine.urlStr = @"";
+    mine.urlStr = @"app/userInfo.html";
     mine.title = @"我的";
     
     
@@ -67,10 +67,12 @@
 
     // Do any additional setup after loading the view.
 }
--(BOOL)tabBarController:(UITabBarController*)tabBarController shouldSelectViewController:(UIViewController*)viewController
 
-{
-    
+
+
+
+
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController*)viewController{
     NSLog(@"viewcontoller===%@",viewController.childViewControllers);
     
     if(([[viewController.childViewControllers objectAtIndex:0]isKindOfClass:[ShopCarViewController class]]||[[viewController.childViewControllers objectAtIndex:0]isKindOfClass:[MineViewController class]])&&[UserModel shareInstance].token.length<1)
@@ -83,8 +85,14 @@
     }
     
     return YES;
-    
 }
+
+
+
+
+
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

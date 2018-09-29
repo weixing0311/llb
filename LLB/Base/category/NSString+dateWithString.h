@@ -22,4 +22,7 @@
 ///根据生日计算年龄
 -(NSString *)getAge;
 -(NSString *)getDateDay;
+
+///当前时间戳
++(NSString *)getNowTimeTimestamp3;
 @end

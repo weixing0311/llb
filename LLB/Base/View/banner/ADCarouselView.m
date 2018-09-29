@@ -342,17 +342,17 @@
     self.pageControlView.numberOfPages = _imgs.count;
 }
 
-- (ADPageControlView *)pageControlView
-{
-    if (!_pageControlView) {
-        _pageControlView = [ADPageControlView pageControlViewWithFrame:CGRectZero];
-        self.pageControlView.allPageDotBackgroundColor = RGBACOLOR(0, 0, 0, .3);
-        self.pageControlView.currentPageDotColor = RGBACOLOR(255, 255, 255, 1);
-
-        [self addSubview:_pageControlView];
-    }
-    return _pageControlView;
-}
+//- (ADPageControlView *)pageControlView
+//{
+//    if (!_pageControlView) {
+//        _pageControlView = [ADPageControlView pageControlViewWithFrame:CGRectZero];
+//        self.pageControlView.allPageDotBackgroundColor = RGBACOLOR(0, 0, 0, .3);
+//        self.pageControlView.currentPageDotColor = RGBACOLOR(255, 255, 255, 1);
+//
+//        [self addSubview:_pageControlView];
+//    }
+//    return _pageControlView;
+//}
 
 - (UILabel *)titleLabel
 {

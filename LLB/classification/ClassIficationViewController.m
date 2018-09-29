@@ -9,19 +9,21 @@
 #import "ClassIficationViewController.h"
 #import "ClassInofoModel.h"
 #import "ClassInfoCollectionViewCell.h"
+#import "GoodsDetailViewController.h"
 @interface ClassIficationViewController ()
 <UITableViewDelegate,
 UITableViewDataSource,
 UICollectionViewDelegate,
 UICollectionViewDataSource,
 UICollectionViewDelegateFlowLayout>
-@property (nonatomic,strong)UITableView * classtb;
-@property (nonatomic,strong)NSMutableArray * classArr;
+@property (nonatomic,strong)   UITableView * classtb;
+@property (nonatomic,strong)   NSMutableArray * classArr;
 @property (strong, nonatomic)  UICollectionViewFlowLayout *layout;
 @property (strong, nonatomic)  UICollectionView *collectionView;
 @property (nonatomic,strong)   NSDictionary * infoDict;
 @property (nonatomic,strong)   NSMutableArray * dataArray;
-@property (nonatomic,strong)NSMutableArray * sectionArray;
+@property (nonatomic,strong)   NSMutableArray * sectionArray;
+@property (nonatomic,strong)   NSMutableArray * brandArray;
 @property (nonatomic,assign)   int  page;
 
 @end
@@ -40,6 +42,7 @@ UICollectionViewDelegateFlowLayout>
     [self buildCollectionView];
     [self setRefrshWithCollectionView:self.collectionView];
     [self getClassInfo];
+    [self getbrand];
 }
 -(void)buildCollectionView
 {
@@ -84,31 +87,22 @@ UICollectionViewDelegateFlowLayout>
 -(void)getDataInfo
 {
     NSMutableDictionary * params =[NSMutableDictionary dictionary];
-    [params safeSetObject:classId forKey:@"parentID"];
-    [params safeSetObject:@(page) forKey:@"page"];
-    [params safeSetObject:@"10" forKey:@"pageSize"];
+    [params safeSetObject:classId forKey:@"classId"];
     [[BaseSerVice sharedManager]post:@"api/product/queryTweClassList.do" paramters:params success:^(NSDictionary *dic) {
         
         
         [self.collectionView.mj_header endRefreshing];
-        [self.collectionView.mj_footer endRefreshing];
+//        [self.collectionView.mj_footer endRefreshing];
         NSDictionary * dataDict =[dic safeObjectForKey:@"data"];
         
-        NSArray * infoArr =[dataDict safeObjectForKey:@"array"];
+        NSArray * infoArr =[dataDict safeObjectForKey:@"classArray"];
         
-        if (page==1) {
-            self.collectionView.mj_footer.hidden = NO;
-            [self.dataArray removeAllObjects];
-        }
-        if (infoArr.count<10) {
-            self.collectionView.mj_footer.hidden = YES;
-        }
-        
+        [self.dataArray removeAllObjects];
         [self.dataArray addObjectsFromArray:infoArr];;
         [self.collectionView reloadData];
     } failure:^(NSError *error) {
         [self.collectionView.mj_header endRefreshing];
-        [self.collectionView.mj_footer endRefreshing];
+//        [self.collectionView.mj_footer endRefreshing];
 
         [self.dataArray removeAllObjects];
         [self.collectionView reloadData];
@@ -116,6 +110,20 @@ UICollectionViewDelegateFlowLayout>
 
 }
 
+//获取品牌
+-(void)getbrand
+{
+    [[BaseSerVice sharedManager]post:@"api/product/queryBrandList.do" paramters:nil success:^(NSDictionary *dic) {
+        NSDictionary * dataDict =[dic safeObjectForKey:@"data"];
+        _brandArray = [dataDict safeObjectForKey:@"brandArray"];
+        
+        [_collectionView reloadData];
+        
+    } failure:^(NSError *error) {
+        
+    }];
+
+}
 #pragma mark ---tableviewDelegate
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -184,7 +192,7 @@ UICollectionViewDelegateFlowLayout>
     
     co.mj_header =  [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerRereshing)];
     
-    co.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerRereshing)];
+//    co.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerRereshing)];
     [co.mj_header beginRefreshing];
     
 }
@@ -193,14 +201,20 @@ UICollectionViewDelegateFlowLayout>
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-    return self.dataArray.count;
+    return 2;
 }
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    
-    NSDictionary * dic = [self.dataArray objectAtIndex:section];
-    NSArray * itemsArr = [dic objectForKey:@"brandArray"];
-    return itemsArr.count;
+    if (section ==0) {
+        return self.dataArray.count ;
+    }
+    else
+    {
+        return _brandArray.count;
+    }
+//    NSDictionary * dic = [self.dataArray objectAtIndex:section];
+//    NSArray * itemsArr = [dic objectForKey:@"brandArray"];
+//    return itemsArr.count;
 }
 ////定义每个Section的四边间距
 
@@ -212,16 +226,25 @@ UICollectionViewDelegateFlowLayout>
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    NSDictionary * infoDict =[self.dataArray objectAtIndex:indexPath.section];
-    NSArray * infoArray = [infoDict safeObjectForKey:@"brandArray"];
-    NSDictionary *dataDict = [infoArray objectAtIndex:indexPath.row];
-    
+    if (indexPath.section ==0) {
+        NSDictionary * dataDict =[self.dataArray objectAtIndex:indexPath.row];
+        
         ClassInfoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ClassInfoCollectionViewCell" forIndexPath:indexPath];
         cell.backgroundColor = [UIColor whiteColor];
-        [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[dataDict safeObjectForKey:@"logo"]] placeholderImage:getImage(@"logo_")];
+        [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[dataDict safeObjectForKey:@"classPicture"]] placeholderImage:getImage(@"default_")];
+        cell.titlelb .text = [dataDict safeObjectForKey:@"className"];
+        return cell;
+
+    }else{
+        NSDictionary * dataDict =[self.brandArray objectAtIndex:indexPath.row];
+        ClassInfoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ClassInfoCollectionViewCell" forIndexPath:indexPath];
+        cell.backgroundColor = [UIColor whiteColor];
+        [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[dataDict safeObjectForKey:@"logo"]] placeholderImage:getImage(@"default_")];
         cell.titlelb .text = [dataDict safeObjectForKey:@"cname"];
         return cell;
+
+    }
+
 }
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 
@@ -230,21 +253,21 @@ UICollectionViewDelegateFlowLayout>
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         UICollectionReusableView *header=[collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"headView" forIndexPath:indexPath];
         
-        NSDictionary * dic = [self.dataArray objectAtIndex:indexPath.section];
-
-        //添加头视图的内容
+//        NSDictionary * dic = [self.dataArray objectAtIndex:indexPath.section];
+//
+//        //添加头视图的内容
         UIView*view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, 40)];
         view.backgroundColor = [UIColor whiteColor];
         UIView * lineView =[[UIView alloc]initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, 5)];
         lineView.backgroundColor = HEXCOLOR(0xeeeeee);
         [view addSubview:lineView];
-        
+
         UILabel*titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 40)];
-        titleLabel.text = [dic safeObjectForKey:@"className"];
+        titleLabel.text = indexPath.section==1?@"品牌":@"";
         titleLabel.font = [UIFont systemFontOfSize:14];
         titleLabel.textColor = HEXCOLOR(0x666666);
         [view addSubview:titleLabel];
-        
+
         //头视图添加view
         [header addSubview:view];
         return header;
@@ -257,7 +280,7 @@ UICollectionViewDelegateFlowLayout>
 //设置item大小
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake((JFA_SCREEN_WIDTH-140)/3, (JFA_SCREEN_WIDTH-140)/3+20);
+    return CGSizeMake((JFA_SCREEN_WIDTH-140)/3, (JFA_SCREEN_WIDTH-140)/3);
 }
 //这个是两行cell之间的间距（上下行cell的间距）
 
@@ -275,6 +298,34 @@ UICollectionViewDelegateFlowLayout>
 {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
     
+    GoodsDetailViewController * gs = [[GoodsDetailViewController alloc]init];
+    gs.hidesBottomBarWhenPushed = YES;
+
+    NSDictionary * dic = [NSDictionary dictionary];
+    NSString * timeStr = [NSString getNowTimeTimestamp3];
+
+    if (indexPath.section ==0) {
+        dic = [self.dataArray objectAtIndex:indexPath.row];
+        
+        
+        
+        gs.urlStr =  [[NSString stringWithFormat:@"app/productList.html?t=%@&classId=%@&groupId=%@&name=%@",timeStr,[dic safeObjectForKey:@"id"],classId,[dic safeObjectForKey:@"className"]] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+        
+        
+        
+
+    }else{
+        dic = [self.brandArray objectAtIndex:indexPath.row];
+        
+        NSString * nameStr = [dic safeObjectForKey:@"cname"];
+        NSString * brandld = [dic safeObjectForKey:@"id"];
+        gs.urlStr =  [[NSString stringWithFormat:@"app/productList.html?t=%@&brandld=%@&name=%@",timeStr,brandld,nameStr] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+
+    }
+    
+    
+    [self.navigationController pushViewController:gs animated:YES];
+
 }
 
 
@@ -315,6 +366,13 @@ UICollectionViewDelegateFlowLayout>
     return _classArr;
 }
 
+-(NSMutableArray *)brandArray
+{
+    if (!_brandArray) {
+        _brandArray  =[NSMutableArray array];
+    }
+    return _brandArray;
+}
 
 
 

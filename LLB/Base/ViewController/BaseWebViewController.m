@@ -27,6 +27,7 @@
 {
     [super viewWillAppear:animated];
     //    self.navigationController.navigationBar.hidden = YES;;
+//    [self.webView reload];
 }
 -(void)viewDidDisappear:(BOOL)animated
 {
@@ -38,8 +39,8 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     
-    UIBarButtonItem * backItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back_"] style:UIBarButtonItemStylePlain target:self action:@selector(didClickBack)];
-    self.navigationItem.leftBarButtonItem = backItem;
+//    UIBarButtonItem * backItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back_"] style:UIBarButtonItemStylePlain target:self action:@selector(didClickBack)];
+//    self.navigationItem.leftBarButtonItem = backItem;
     if (self.rightBtnUrl.length>0) {
         UIBarButtonItem * rightitem =[[UIBarButtonItem alloc]initWithTitle:self.rightBtnTitle style:UIBarButtonItemStylePlain target:self action:@selector(enterRightPage)];
         self.navigationItem.rightBarButtonItem = rightitem;
@@ -76,7 +77,7 @@
     [userContentController addScriptMessageHandler:self name:@"setPayInfo"];
     [userContentController addScriptMessageHandler:self name:@"toReorder"];
     [userContentController addScriptMessageHandler:self name:@"toForward"];
-    [userContentController addScriptMessageHandler:self name:@"toLoign"];
+    [userContentController addScriptMessageHandler:self name:@"toLogin"];
 
     configuration.userContentController = userContentController;
     
@@ -89,7 +90,7 @@
 
     
     
-    self.webView = [[WKWebView alloc]initWithFrame:CGRectMake(0, 70, JFA_SCREEN_WIDTH, JFA_SCREEN_HEIGHT-70) configuration:configuration];
+    self.webView = [[WKWebView alloc]initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, JFA_SCREEN_HEIGHT) configuration:configuration];
     
     NSString  * urlss =@"";
      if ([_urlStr containsString:@"https://"]||[_urlStr containsString:@"http://"])
@@ -100,7 +101,6 @@
     {
         urlss = [kMyBaseUrl stringByAppendingString:self.urlStr];
     }
-    
     
 
     NSURL * url  =[NSURL URLWithString:urlss];
@@ -119,6 +119,11 @@
         [self.webView loadRequest:request] ;
 
     // Do any additional setup after loading the view from its nib.
+    
+    
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadNewNet:) name:@"LoginSuccessLoadNewNet" object:nil];
+    
     
 }
 
@@ -160,12 +165,10 @@
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return nil;
 }
-
-//在发送请求之前，决定是否跳转  如果不实现这个代理方法,默认会屏蔽掉打电话等url
 -(void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
     WKNavigationActionPolicy actionPolicy = WKNavigationActionPolicyAllow;
-
+    
     NSString *url = [navigationAction.request.URL.absoluteString stringByRemovingPercentEncoding];
     NSString* reUrl=[[webView URL] absoluteString];
     if ([url containsString:kMyBaseUrl]) {
@@ -176,9 +179,77 @@
     if (navigationAction.targetFrame == nil) {
         [webView loadRequest:navigationAction.request];
     }
-
+    if ([url containsString:@"weixindetermine.jsp?"]) {
+        decisionHandler(WKNavigationActionPolicyCancel);
+        return;
+    }
+    
+    DLog(@"navi.url --%@",url);
+    if ([url containsString:@"alipay://"]) {
+        NSString* dataStr=[url substringFromIndex:23];
+        NSLog(@"%@",dataStr);
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ NSString stringWithFormat:@"alipay://alipayclient/?%@",[self encodeString:dataStr]]]];// 对参数进行urlencode，拼接上scheme。
+        
+        
+        
+        decisionHandler(WKNavigationActionPolicyAllow);
+        return;
+    }
+    
+    if ([url containsString:@"weixin://wap/pay?"]) {
+        actionPolicy =WKNavigationActionPolicyCancel;
+//        WXAlipayController * wchatPay = [[WXAlipayController alloc]init];
+//        wchatPay.urlStr = url;
+//        wchatPay.orderNoUrl = self.wxPayCallBackUrl;
+//        [self.navigationController pushViewController:wchatPay animated:YES];
+        decisionHandler(WKNavigationActionPolicyAllow);
+        
+        
+        
+        return;
+    }
+    
+    
+    
+    if([url containsString:@"notify.jsp?"]&&![url containsString:@"https://openapi.alipay.com/gateway.do"] )//支付成功回调
+    {
+        NSDictionary * urlDict = [self getURLParameters:url];
+        
+        int orderType = [[urlDict safeObjectForKey:@"orderType"]intValue];
+        orderType=3;
+        
+        
+//        PaySuccessViewController * pas = [[PaySuccessViewController alloc]init];
+//        pas.orderType = orderType;
+//        pas.paySuccess = YES;
+//        [self.navigationController pushViewController:pas animated:YES];
+        
+        decisionHandler(WKNavigationActionPolicyAllow);
+        
+        return;
+    }
+    if([url containsString:@"notifyFail.jsp?"])//支付失败回调
+    {
+        NSDictionary * urlDict = [self getURLParameters:url];
+        
+        int orderType = [[urlDict safeObjectForKey:@"orderType"]intValue];
+        orderType=3;
+        
+//        PaySuccessViewController * pas = [[PaySuccessViewController alloc]init];
+//        pas.orderType = orderType;
+//        pas.paySuccess = NO;
+//        [self.navigationController pushViewController:pas animated:YES];
+        
+        decisionHandler(WKNavigationActionPolicyAllow);
+        
+        return;
+    }
+    
+    
     decisionHandler(WKNavigationActionPolicyAllow);
 }
+
+//在发送请求之前，决定是否跳转  如果不实现这个代理方法,默认会屏蔽掉打电话等url
 
 -(NSString*)encodeString:(NSString*)unencodedString{
     
@@ -312,6 +383,8 @@
 ///web调用方法
 -(void)didShowInfoWithMessage:(WKScriptMessage*)message
 {
+    
+    DLog(@"------------->方法调用了！！方法名:%@",message.name);
     //发送头信息
     if ([message.name isEqualToString:@"getHeader"]) {
         [self getHeader];
@@ -344,28 +417,23 @@
     {
         [self getSource];
     }
-    else if ([message.name isEqualToString:@"setPayInfo"]){
-        [self setPayInfoWithMessage:message.body];
-    }
-    //发送付款信息po
-    else if ([message.name isEqualToString:@"getPayInfo"])
-    {
-        [self sendPayInfo];
-    }
     //跳转页面
     else if ([message.name isEqualToString:@"toForward"])
     {
         [self loadUrlWithDict:message.body];
-    }else if([message.name isEqualToString:@"toLoign"])
+    }else if([message.name isEqualToString:@"toLogin"])
     {
+        
+        DLog(@"message--%@",message);
+        self.loginUrl = message.body;
         LoignViewController * lo = [[LoignViewController alloc]init];
+        lo.objectStr = self.objectStr;
         [self presentViewController:lo animated:YES completion:^{
             
         }];
-    }
-    
-}
 
+    }
+}
 
 
 /**
@@ -392,21 +460,21 @@
     //    return dic;
 }
 
--(void)didClickBack
-{
-    if ([self.title isEqualToString:@"收银台"]) {
-        UIAlertController * al = [ UIAlertController alertControllerWithTitle:@"确认要离开收银台？" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-        [al addAction:[UIAlertAction actionWithTitle:@"继续支付" style:UIAlertActionStyleCancel handler:nil]];
-        [al addAction: [UIAlertAction actionWithTitle:@"确认离开" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-//            [self backWithPayType];
-        }]];
-        
-        [self presentViewController:al animated:YES completion:nil];
-    }else{
-        [self.navigationController popViewControllerAnimated:YES];
-    }
-}
+//-(void)didClickBack
+//{
+//    if ([self.title isEqualToString:@"收银台"]) {
+//        UIAlertController * al = [ UIAlertController alertControllerWithTitle:@"确认要离开收银台？" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+//        [al addAction:[UIAlertAction actionWithTitle:@"继续支付" style:UIAlertActionStyleCancel handler:nil]];
+//        [al addAction: [UIAlertAction actionWithTitle:@"确认离开" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//
+////            [self backWithPayType];
+//        }]];
+//
+//        [self presentViewController:al animated:YES completion:nil];
+//    }else{
+//        [self.navigationController popViewControllerAnimated:YES];
+//    }
+//}
 
 
 /**
@@ -452,65 +520,6 @@
     LoignViewController *lo = [[LoignViewController alloc]init];
     self.view.window.rootViewController = lo;
 }
-/**
- * 充值
- */
--(void)setPayInfoWithMessage:(NSDictionary *)message
-{
-    if (![message isKindOfClass:[NSDictionary class]]) {
-        [[UserModel shareInstance]showInfoWithStatus:@"后台参数错误"];
-        return;
-    }
-    
-    
-    BaseWebViewController * web =[[BaseWebViewController alloc]init];
-    web.payType =4;
-    web.urlStr=@"app/checkstand.html";
-    web.opt =0;
-    web.title = @"收银台";
-    web.orderNo = [message safeObjectForKey:@"orderNo"];
-    web.payableAmount =[message safeObjectForKey:@"payableAmount"];
-    [self.navigationController pushViewController:web animated:YES];
-    
-    
-    //    NSString  * urlss = [kMyBaseUrl stringByAppendingString:@"app/checkstand.html"];
-    //    NSURL * url  =[NSURL URLWithString:urlss];
-    //    DLog(@"webUrl = %@",url);
-    //    [self.webView loadRequest:[NSURLRequest requestWithURL:url]] ;
-    
-    
-    
-    
-}
-/**
- *支付上传数据
- */
--(void)sendPayInfo
-{
-    NSMutableDictionary * dic = [NSMutableDictionary dictionary];
-    [dic safeSetObject:[UserModel shareInstance].userId forKey:@"userid"];
-    [dic safeSetObject:[UserModel shareInstance].token forKey:@"token"];
-//    [dic safeSetObject:[UserModel shareInstance].userType forKey:@"userType"];
-    [dic safeSetObject:self.orderNo forKey:@"orderNo"];
-    [dic safeSetObject:[NSString stringWithFormat:@"%.2f",[self.payableAmount floatValue]] forKey:@"payableAmount"];
-    [dic safeSetObject:@(self.payType) forKey:@"orderType"];
-    [dic safeSetObject:@(self.opt) forKey:@"opt"];
-    if ([self.integral isEqualToString:@"1"]||[self.integral isEqualToString:@"2"]||[self.integral isEqualToString:@"3"]) {
-        [dic safeSetObject:self.integral forKey:@"integral"];
-    }
-    else{
-        [dic safeSetObject:@"0" forKey:@"integral"];
-    }
-    
-    NSString * jsonValue = [self DataTOjsonString:dic];
-    NSString * JSResult = [NSString stringWithFormat:@"getOrderInfo('%@')",jsonValue];
-    
-    DLog(@"JSResult ===%@",JSResult);
-    [self.webView evaluateJavaScript:JSResult completionHandler:^(id _Nullable user, NSError * _Nullable error) {
-        NSLog(@"%@----%@",user, error);
-    }];
-    
-}
 
 -(void)getSource
 {
@@ -521,7 +530,12 @@
     }];
     
 }
-
+-(void)loadNewNet:(NSNotification *)noti
+{
+    
+    NSString * url = [noti.userInfo objectForKey:@"urlStr"];
+    [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+}
 
 
 
@@ -561,7 +575,6 @@
  */
 - (NSMutableDictionary *)getURLParameters:(NSString *)urlStr {
     
-//    urlStr = @"http://test.fitgeneral.com/mall/notfy.jsp?orderType=3&total_amount=0.01&timestamp=2017-08-14+14:31:26&sign=PvPo75w/XeteSKJ1o+E1EqgPYPlDdUhCONCiARQR92FUJjT2i7gfsmCUCqcYMaeaZqZJQhEHEPm0nAGliUkULkYYKpRCN1A0oZFhzMuLaSXAjc6BcLH6Cy5JwIFVcOMjs2xVMZ5Pm+fVj+GlHqO7w8jrHTF/sxZu3vBB68zj9HbV0Om+t23k39tqK9t6JI7heLSObf1YQ/+MwtBnly+3hx90sKVLw2IaFpKAfEfvVxhvXACur3gF35MysByu8+mDQUdbPZTpH/mvmt2eMYeO1gARh/djxS2ZdJ0brl9HkNQkAsG1NT8e9rtTSklF3wYt9KY8TfLjQY6IadR8iWNolg==&trade_no=2017081421001004940270810861&sign_type=RSA2&auth_app_id=2017050307089464&charset=UTF-8&seller_id=2088621870283133&method=alipay.trade.wap.pay.return&app_id=2017050307089464&out_trade_no=131708141426510531472&version=1.0";
     // 查找参数
     NSRange range = [urlStr rangeOfString:@"?"];
     if (range.location == NSNotFound) {
@@ -640,6 +653,11 @@
     
     return params;
 }
+
+
+
+
+
 
 //清除WK缓存，否则H5界面跟新，这边不会更新
 -(void)remoViewCookies{
