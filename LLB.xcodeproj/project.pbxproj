@@ -30,7 +30,6 @@
 		6C211602215A09B90007CDE5 /* SearchResultViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C211600215A09B90007CDE5 /* SearchResultViewController.xib */; };
 		6CABCA312149F221008A966F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CABCA302149F221008A966F /* AppDelegate.m */; };
 		6CABCA392149F221008A966F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CABCA382149F221008A966F /* Assets.xcassets */; };
-		6CABCA3C2149F221008A966F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6CABCA3A2149F221008A966F /* LaunchScreen.storyboard */; };
 		6CABCA3F2149F221008A966F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CABCA3E2149F221008A966F /* main.m */; };
 		6CABCA902149F59B008A966F /* FirstTabbarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CABCA8F2149F59B008A966F /* FirstTabbarViewController.m */; };
 		6CABCA932149F5A6008A966F /* SecondTabbarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CABCA922149F5A6008A966F /* SecondTabbarViewController.m */; };
@@ -652,7 +651,6 @@
 				6C2113C32150CF9B0007CDE5 /* HomeAdCell.xib in Resources */,
 				6C2113BB2150A1600007CDE5 /* ClassInfoCollectionViewCell.xib in Resources */,
 				6C2113B3214BBA550007CDE5 /* test1.png in Resources */,
-				6CABCA3C2149F221008A966F /* LaunchScreen.storyboard in Resources */,
 				6CABCAAC214A3FCA008A966F /* MobileLoignViewController.xib in Resources */,
 				6CABCA392149F221008A966F /* Assets.xcassets in Resources */,
 				6C2113AC214BB8A90007CDE5 /* PublicGoodsCell.xib in Resources */,
@@ -676,7 +674,6 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

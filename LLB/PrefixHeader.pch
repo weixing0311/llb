@@ -14,8 +14,9 @@
 
 
 
+#define  weChatPayRefere @"com.llb"
 
-#define kMyBaseUrl @"http://m.linlbang.com/"
+#define kMyBaseUrl @"https://app.wwogou.com/"
 
 
 

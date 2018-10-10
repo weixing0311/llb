@@ -102,6 +102,17 @@
         urlss = [kMyBaseUrl stringByAppendingString:self.urlStr];
     }
     
+    if ([urlss containsString:@"https://wx.tenpay.com"] ) {
+        if ([urlss containsString:@"redirect_url"]) {
+            
+            NSDictionary *dict =[self getURLParameters:urlss];
+            DLog(@"%@",dict);
+            self.wxPayCallBackUrl = [dict safeObjectForKey:@"redirect_url"];
+            NSArray *array = [urlss componentsSeparatedByString:@"?"]; //从字符A中分隔成2个元素的数组
+            
+            urlss =[NSString stringWithFormat:@"%@?package=%@&prepay_id=%@",array[0],[dict safeObjectForKey:@"package"],[dict safeObjectForKey:@"prepay_id"]];
+        }
+    }
 
     NSURL * url  =[NSURL URLWithString:urlss];
     self.webView.UIDelegate = self;
@@ -115,8 +126,32 @@
     
     
     NSURLRequest * request = [NSURLRequest requestWithURL:url];
-
+    if ([urlss containsString:@"https://wx.tenpay.com"]) {
+        NSDictionary *headers = [request allHTTPHeaderFields];
+        BOOL hasReferer = [headers objectForKey:@"Referer"]!=nil;
+        if (hasReferer) {
+            // .. is this my referer?
+        } else {
+            // relaunch with a modified request
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSURL *url = [request URL];
+                    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
+                    [request setHTTPMethod:@"GET"];
+                    
+                    NSString * referer = [NSString stringWithFormat:@"%@://",weChatPayRefere];
+                    
+                    [request setValue:referer forHTTPHeaderField: @"Referer"];
+                    [self.webView loadRequest:request] ;
+                });
+            });
+        }
+    }else{
         [self.webView loadRequest:request] ;
+        
+    }
+
+//        [self.webView loadRequest:request] ;
 
     // Do any additional setup after loading the view from its nib.
     
@@ -189,6 +224,70 @@
         NSString* dataStr=[url substringFromIndex:23];
         NSLog(@"%@",dataStr);
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ NSString stringWithFormat:@"alipay://alipayclient/?%@",[self encodeString:dataStr]]]];// 对参数进行urlencode，拼接上scheme。
+        
+        
+        
+        if ([url containsString:@"alipay://"]) {
+            NSString* dataStr=[url substringFromIndex:23];
+            NSLog(@"%@",dataStr);
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ NSString stringWithFormat:@"alipay://alipayclient/?%@",[self encodeString:dataStr]]]];// 对参数进行urlencode，拼接上scheme。
+            
+            
+            
+            decisionHandler(WKNavigationActionPolicyAllow);
+            return;
+        }
+        
+        if ([url containsString:@"weixin://wap/pay?"]) {
+            actionPolicy =WKNavigationActionPolicyCancel;
+//            WXAlipayController * wchatPay = [[WXAlipayController alloc]init];
+//            wchatPay.urlStr = url;
+//            wchatPay.orderNoUrl = self.wxPayCallBackUrl;
+//            [self.navigationController pushViewController:wchatPay animated:YES];
+            decisionHandler(WKNavigationActionPolicyAllow);
+            
+            
+            return;
+        }
+        
+        
+        
+        if([url containsString:@"notify.jsp?"]&&![url containsString:@"https://openapi.alipay.com/gateway.do"] )//支付成功回调
+        {
+            NSDictionary * urlDict = [self getURLParameters:url];
+            
+            int orderType = [[urlDict safeObjectForKey:@"orderType"]intValue];
+            orderType=3;
+            
+            
+//            PaySuccessViewController * pas = [[PaySuccessViewController alloc]init];
+//            pas.orderType = orderType;
+//            pas.paySuccess = YES;
+//            [self.navigationController pushViewController:pas animated:YES];
+            
+            decisionHandler(WKNavigationActionPolicyAllow);
+            
+            return;
+        }
+        if([url containsString:@"notifyFail.jsp?"])//支付失败回调
+        {
+            NSDictionary * urlDict = [self getURLParameters:url];
+            
+            int orderType = [[urlDict safeObjectForKey:@"orderType"]intValue];
+            orderType=3;
+            
+//            PaySuccessViewController * pas = [[PaySuccessViewController alloc]init];
+//            pas.orderType = orderType;
+//            pas.paySuccess = NO;
+//            [self.navigationController pushViewController:pas animated:YES];
+            
+            decisionHandler(WKNavigationActionPolicyAllow);
+            
+            return;
+        }
+
+        
+        
         
         
         
@@ -292,10 +391,11 @@
     
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提醒" message:message preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        completionHandler();
+//        completionHandler();
     }]];
     
     [self presentViewController:alert animated:YES completion:nil];
+      completionHandler();
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
@@ -445,7 +545,7 @@
     NSMutableDictionary * dic = [NSMutableDictionary dictionary];
     [dic safeSetObject:[UserModel shareInstance].userId forKey:@"userid"];
     [dic safeSetObject:[UserModel shareInstance].token forKey:@"token"];
-//    [dic safeSetObject:[UserModel shareInstance].userType forKey:@"userType"];
+    [dic safeSetObject:[UserModel shareInstance].nickName forKey:@"name"];
     
     
     NSString * jsonValue = [self DataTOjsonString:dic];
@@ -453,7 +553,7 @@
     
     //    DLog(@"JSResult ===%@",JSResult);
     [self.webView evaluateJavaScript:JSResult completionHandler:^(id _Nullable user, NSError * _Nullable error) {
-        //        NSLog(@"%@----%@",user, error);
+            NSLog(@"getUser%@----%@",user, error);
     }];
     
     

@@ -24,11 +24,14 @@ UITextFieldDelegate
 @end
 
 @implementation SearchResultViewController
-
+{
+    NSInteger page;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.searchtf.delegate = self;
+    [self.searchtf becomeFirstResponder];
     self.collectionView.delegate = self;
     self.collectionView.alwaysBounceVertical = YES;//实现代理
     self.collectionView.dataSource = self;                  //实现数据源方法
@@ -37,9 +40,33 @@ UITextFieldDelegate
     [self.collectionView registerNib:[UINib nibWithNibName:@"PublicGoodsCell" bundle:nil]forCellWithReuseIdentifier: @"PublicGoodsCell"];
     self.bgView.hidden = YES;
     [self.bgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenIts)]];
-
+    self.collectionView.mj_header =  [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerRereshing)];
+    [self.collectionView.mj_header beginRefreshing];
 }
+
+-(void)headerRereshing
+{
+    page = 1;
+    [self getDataInfo];
+}
+
+-(void)getDataInfo
+{
+//
+    NSMutableDictionary *params =[NSMutableDictionary dictionary];
+    [params safeSetObject:@"100" forKey:@"pageSize"];
+    [params safeSetObject:@(page) forKey:@"pageSize"];
+    [params safeSetObject:@"10" forKey:@"productName"];
+
+    [[BaseSerVice sharedManager]post:@"api/product/queryLikeProductList.do" paramters:params success:^(NSDictionary *dic) {
+        
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
 - (IBAction)didBack:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 -(void)hiddenIts
 {
@@ -123,6 +150,11 @@ UITextFieldDelegate
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     self.bgView.hidden = YES;
+    
+    BaseWebViewController * wb =[[BaseWebViewController alloc]init];
+    wb.urlStr = [[NSString stringWithFormat:@"app/searchList.html?t=%@&productName=%@",[NSString getNowTimeTimestamp3],_searchtf.text] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    wb.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:wb animated:YES];
     return YES;
 }
 
