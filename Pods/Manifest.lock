@@ -14,9 +14,9 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - MJRefresh (3.1.15)
+  - MJRefresh (3.1.12)
   - RSAEncrypt (1.1.0)
-  - SDAutoLayout (2.1.9)
+  - SDAutoLayout (2.1.8)
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
   - SDWebImage/Core (4.0.0)
@@ -24,7 +24,7 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 3.1.0)
-  - MJRefresh (~> 3.1.15)
+  - MJRefresh (~> 3.1.12)
   - RSAEncrypt (~> 1.1.0)
   - SDAutoLayout (~> 2.1.8)
   - SDWebImage (~> 4.0.0)
@@ -32,12 +32,12 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  MJRefresh: 9af70f5f9327a2cf87f0fb5929f35fcc2fa638ea
+  MJRefresh: b96cdb21c4aa75a7b07654311ab2f315c497e806
   RSAEncrypt: 06cb5e81ca7063f2f537d61f8e247a43d18cbab4
-  SDAutoLayout: 6b6f4db0d009dfc46cef14ef710dbb164e86616c
+  SDAutoLayout: 5a4b48d6b8a5172ae8d088d2879e40dd795e6251
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
 
-PODFILE CHECKSUM: 94e1f12cf2bcea23d7d45630ae04e9fdd5d621ff
+PODFILE CHECKSUM: 36f663403b25e04618b7f86ffd23113f4fc4c43e
 
 COCOAPODS: 1.3.1

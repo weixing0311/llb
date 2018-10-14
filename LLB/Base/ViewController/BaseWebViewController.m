@@ -78,6 +78,12 @@
     [userContentController addScriptMessageHandler:self name:@"toReorder"];
     [userContentController addScriptMessageHandler:self name:@"toForward"];
     [userContentController addScriptMessageHandler:self name:@"toLogin"];
+    [userContentController addScriptMessageHandler:self name:@"didClickPay"];
+    [userContentController addScriptMessageHandler:self name:@"payCallback"];
+    [userContentController addScriptMessageHandler:self name:@"share"];
+    [userContentController addScriptMessageHandler:self name:@"getCheckHeader"];
+    [userContentController addScriptMessageHandler:self name:@"pay"];
+
 
     configuration.userContentController = userContentController;
     
@@ -102,17 +108,6 @@
         urlss = [kMyBaseUrl stringByAppendingString:self.urlStr];
     }
     
-    if ([urlss containsString:@"https://wx.tenpay.com"] ) {
-        if ([urlss containsString:@"redirect_url"]) {
-            
-            NSDictionary *dict =[self getURLParameters:urlss];
-            DLog(@"%@",dict);
-            self.wxPayCallBackUrl = [dict safeObjectForKey:@"redirect_url"];
-            NSArray *array = [urlss componentsSeparatedByString:@"?"]; //从字符A中分隔成2个元素的数组
-            
-            urlss =[NSString stringWithFormat:@"%@?package=%@&prepay_id=%@",array[0],[dict safeObjectForKey:@"package"],[dict safeObjectForKey:@"prepay_id"]];
-        }
-    }
 
     NSURL * url  =[NSURL URLWithString:urlss];
     self.webView.UIDelegate = self;
@@ -126,30 +121,8 @@
     
     
     NSURLRequest * request = [NSURLRequest requestWithURL:url];
-    if ([urlss containsString:@"https://wx.tenpay.com"]) {
-        NSDictionary *headers = [request allHTTPHeaderFields];
-        BOOL hasReferer = [headers objectForKey:@"Referer"]!=nil;
-        if (hasReferer) {
-            // .. is this my referer?
-        } else {
-            // relaunch with a modified request
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSURL *url = [request URL];
-                    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
-                    [request setHTTPMethod:@"GET"];
-                    
-                    NSString * referer = [NSString stringWithFormat:@"%@://",weChatPayRefere];
-                    
-                    [request setValue:referer forHTTPHeaderField: @"Referer"];
-                    [self.webView loadRequest:request] ;
-                });
-            });
-        }
-    }else{
-        [self.webView loadRequest:request] ;
+    [self.webView loadRequest:request] ;
         
-    }
 
 //        [self.webView loadRequest:request] ;
 
@@ -209,7 +182,7 @@
     if ([url containsString:kMyBaseUrl]) {
         reUrl=url;
     }
-    
+    DLog(@"url---%@",url);
     //如果是跳转一个新页面
     if (navigationAction.targetFrame == nil) {
         [webView loadRequest:navigationAction.request];
@@ -452,12 +425,15 @@
     //防止progressView被网页挡住
     [self.view bringSubviewToFront:self.progressView];
     
+    
+    [self showTabbarWithUrl:webView.URL.absoluteString];
+    
 }
 
 // 当内容开始返回时调用
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
-    
+    DLog(@"当内容开始返回时调用");
 }
 
 // 页面加载完成之后调用
@@ -484,7 +460,7 @@
 -(void)didShowInfoWithMessage:(WKScriptMessage*)message
 {
     
-    DLog(@"------------->方法调用了！！方法名:%@",message.name);
+    DLog(@"调用了！！方法名:>>(%@)<<",message.name);
     //发送头信息
     if ([message.name isEqualToString:@"getHeader"]) {
         [self getHeader];
@@ -530,6 +506,35 @@
         lo.objectStr = self.objectStr;
         [self presentViewController:lo animated:YES completion:^{
             
+        }];
+    }
+    else if ([message.name isEqualToString:@"payCallback"])
+    {
+        [self payCallBackWithInfo:message.body];
+    }
+    else if ([message.name isEqualToString:@"didClickPay"])
+    {
+        [self didPayWithInfo:message.body];
+    }
+    else if ([message.name isEqualToString:@"share"])
+    {
+        [self showShareMenuWithDict:message.body];
+    }
+    else if([message.name isEqualToString:@"getCheckHeader"])
+    {
+        
+        NSMutableDictionary * dic = [NSMutableDictionary dictionary];
+        [dic safeSetObject:[UserModel shareInstance].userId forKey:@"userid"];
+        [dic safeSetObject:[UserModel shareInstance].token forKey:@"token"];
+        [dic safeSetObject:[UserModel shareInstance].nickName forKey:@"name"];
+        
+        
+        NSString * jsonValue = [self DataTOjsonString:dic];
+        NSString *JSResult = [NSString stringWithFormat:@"getCheckUser('%@')",jsonValue];
+        
+        //    DLog(@"JSResult ===%@",JSResult);
+        [self.webView evaluateJavaScript:JSResult completionHandler:^(id _Nullable user, NSError * _Nullable error) {
+            NSLog(@"getUser%@----%@",user, error);
         }];
 
     }
@@ -758,8 +763,8 @@
 
 
 
-
-//清除WK缓存，否则H5界面跟新，这边不会更新
+#pragma mark ---清除WK缓存，否则H5界面跟新，这边不会更新
+///清除WK缓存，否则H5界面跟新，这边不会更新
 -(void)remoViewCookies{
     
     
@@ -782,6 +787,151 @@
 
 - (void)dealloc {
     [self.webView removeObserver:self forKeyPath:@"estimatedProgress"];
+}
+
+
+
+
+#pragma mark ---分享
+-(void)showShareMenuWithDict:(NSDictionary *)dict
+{
+    UIAlertController * al = [UIAlertController alertControllerWithTitle:@"" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+    [al addAction:[UIAlertAction actionWithTitle:@"微信好友" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self shareWXwithUrl:dict Session:0];
+    }]];
+    [al addAction:[UIAlertAction actionWithTitle:@"微信朋友圈" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self shareWXwithUrl:dict Session:1];
+
+    }]];
+    [al addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:al animated:YES completion:nil];
+}
+
+///微信分享
+-(void)shareWXwithUrl:(NSDictionary *)dict Session:(int)session
+{
+    SendMessageToWXReq *req1 = [[SendMessageToWXReq alloc]init];
+
+    // 是否是文档
+    req1.bText =  NO;
+    
+    //    WXSceneSession  = 0,        /**< 聊天界面    */
+    //    WXSceneTimeline = 1,        /**< 朋友圈      */
+    //    WXSceneFavorite = 2,
+    
+    
+    req1.scene = session;
+    
+    //创建分享内容对象
+    WXMediaMessage *urlMessage = [WXMediaMessage message];
+    urlMessage.title = [dict safeObjectForKey:@"title"];//kLinkTitle;//分享标题
+    urlMessage.description = [dict safeObjectForKey:@"description"];//kLinkDescription;//分享描述
+    
+    NSData  * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:[dict safeObjectForKey:@"img"]]];
+    
+    [urlMessage setThumbImage:[UIImage imageWithData:data]];//分享图片,使用SDK的setThumbImage方法可压缩图片大小
+    
+    //创建多媒体对象
+    WXWebpageObject *webObj = [WXWebpageObject object];
+    webObj.webpageUrl = [dict safeObjectForKey:@"linkUrl" ];//kLinkURL;//分享链接
+    
+    //完成发送对象实例
+    urlMessage.mediaObject = webObj;
+    req1.message = urlMessage;
+    
+    //发送分享信息
+    [WXApi sendReq:req1];
+    
+    
+}
+
+-(void)didPayWithInfo:(NSDictionary *)infoDict
+{
+//    platform 支付平台 1 支付宝 2 微信 3 银联
+//    url 支付地址
+//    payFlag 1 需要支付完成需要跳转 2 不需要
+//    orderType 1 代表下单 2 代表充值
+//    orderUrl 配合payFlag使用 在payFlag为1的情况下需要
+//    payFlag 与 orderUrl场景说明：在支付完成之后需要跳转到订单页面
+    
+    NSString * platform = [infoDict safeObjectForKey:@"platform"];
+    NSString * url = [infoDict safeObjectForKey:@"url"];
+//    NSString * payFlag = [infoDict safeObjectForKey:@"payFlag"];
+//    NSString * orderType = [infoDict safeObjectForKey:@"orderType"];
+//    NSString * orderUrl = [infoDict safeObjectForKey:@"orderUrl"];
+
+    
+    if ([platform isEqualToString:@"1"]) {
+        
+        
+        
+        
+    }
+    else if ([platform isEqualToString:@"2"])
+    {
+        if ([url containsString:@"redirect_url"]) {
+            
+            NSDictionary *dict =[self getURLParameters:url];
+            DLog(@"%@",dict);
+            self.wxPayCallBackUrl = [dict safeObjectForKey:@"redirect_url"];
+            NSArray *array = [url componentsSeparatedByString:@"?"]; //从字符A中分隔成2个元素的数组
+            
+            url =[NSString stringWithFormat:@"%@?package=%@&prepay_id=%@",array[0],[dict safeObjectForKey:@"package"],[dict safeObjectForKey:@"prepay_id"]];
+        }
+        if ([url containsString:@"https://wx.tenpay.com"]) {
+            NSURLRequest * request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+
+            NSDictionary *headers = [request allHTTPHeaderFields];
+            BOOL hasReferer = [headers objectForKey:@"Referer"]!=nil;
+            if (hasReferer) {
+                // .. is this my referer?
+            } else {
+                // relaunch with a modified request
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        NSURL *url = [request URL];
+                        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
+                        [request setHTTPMethod:@"GET"];
+                        
+                        NSString * referer = [NSString stringWithFormat:@"%@://",weChatPayRefere];
+                        
+                        [request setValue:referer forHTTPHeaderField: @"Referer"];
+//                        [self.webView loadRequest:request] ;
+                    });
+                });
+            }
+        }
+
+    }
+    else if([platform isEqualToString:@"3"])
+    {
+        
+        
+    }
+    NSURLRequest * request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [self.webView loadRequest:request];
+
+    
+    
+}
+-(void)payCallBackWithInfo:(NSDictionary *)infoDict
+{
+    NSString * payStatus =[infoDict safeObjectForKey:@"payStatus"];
+    if ([payStatus isEqualToString:@"1"]) {
+        ///成功
+    }
+    else if ([payStatus isEqualToString:@"2"])
+    {
+//        失败
+    }else if ([payStatus isEqualToString:@"3"])
+    {
+//        取消
+    }
+}
+
+-(void)showTabbarWithUrl:(NSString *)url
+{
+    
 }
 
 

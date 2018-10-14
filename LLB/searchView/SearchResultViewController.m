@@ -7,7 +7,8 @@
 //
 
 #import "SearchResultViewController.h"
-#import "PublicGoodsCell.h"
+#import "SearchHistoryCell.h"
+
 @interface SearchResultViewController ()
 <
 UICollectionViewDelegate,
@@ -30,6 +31,7 @@ UITextFieldDelegate
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.dataArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"searchHistoryUserDefaults"];
     self.searchtf.delegate = self;
     [self.searchtf becomeFirstResponder];
     self.collectionView.delegate = self;
@@ -37,7 +39,7 @@ UITextFieldDelegate
     self.collectionView.dataSource = self;                  //实现数据源方法
     self.collectionView.backgroundColor= HEXCOLOR(0xf8f8f8);
     self.collectionView.allowsMultipleSelection = YES;      //实现多选，默认是NO
-    [self.collectionView registerNib:[UINib nibWithNibName:@"PublicGoodsCell" bundle:nil]forCellWithReuseIdentifier: @"PublicGoodsCell"];
+    [self.collectionView registerNib:[UINib nibWithNibName:@"SearchHistoryCell" bundle:nil]forCellWithReuseIdentifier: @"SearchHistoryCell"];
     self.bgView.hidden = YES;
     [self.bgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenIts)]];
     self.collectionView.mj_header =  [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerRereshing)];
@@ -94,34 +96,21 @@ UITextFieldDelegate
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    NSDictionary * dict = [self.dataArray objectAtIndex:indexPath.row];
-    PublicGoodsCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"PublicGoodsCell" forIndexPath:indexPath];
+    NSString * searchTextStr = [self.dataArray objectAtIndex:indexPath.row];
+    SearchHistoryCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"SearchHistoryCell" forIndexPath:indexPath];
     cell.backgroundColor = [UIColor whiteColor];
-    [cell.goodsImg sd_setImageWithURL:[NSURL URLWithString:[dict safeObjectForKey:@"defPicture"]] placeholderImage:getImage(@"default_")];
+    cell.searchlb.text = searchTextStr;
     
     
     
-    
-    NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    // 对齐方式
-    style.alignment = NSTextAlignmentJustified;
-    // 首行缩进
-    style.firstLineHeadIndent = 30.0f;
-    // 头部缩进
-    style.headIndent = 10.0f;
-    // 尾部缩进
-    style.tailIndent = -10.0f;
-    NSAttributedString *attrText = [[NSAttributedString alloc] initWithString:[dict safeObjectForKey:@"productName"] attributes:@{ NSParagraphStyleAttributeName : style}];
-    cell.goodstitlelb.attributedText = attrText;
-    
-    
-    cell.pricelb.text = [NSString stringWithFormat:@"￥%.1f",[[dict safeObjectForKey:@"productPrice"]doubleValue]];
     return cell;
 }
 //设置item大小
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2+80);
+    NSString * searchTextStr = [self.dataArray objectAtIndex:indexPath.row];
+    float width = [searchTextStr widthForLabelWithHeight:30 isFont:[UIFont systemFontOfSize:15]];
+    return CGSizeMake(width,30 );
 }
 //这个是两行cell之间的间距（上下行cell的间距）
 
@@ -150,6 +139,13 @@ UITextFieldDelegate
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     self.bgView.hidden = YES;
+    
+    if (self.searchtf.text.length>1) {
+        NSMutableArray * arr = [[NSUserDefaults standardUserDefaults]objectForKey:@"searchHistoryUserDefaults"];
+        [arr insertObject:self.searchtf.text atIndex:0];
+        [[NSUserDefaults standardUserDefaults]setObject:arr forKey:@"searchHistoryUserDefaults"];
+    }
+    
     
     BaseWebViewController * wb =[[BaseWebViewController alloc]init];
     wb.urlStr = [[NSString stringWithFormat:@"app/searchList.html?t=%@&productName=%@",[NSString getNowTimeTimestamp3],_searchtf.text] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];

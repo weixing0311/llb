@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -20,6 +20,10 @@
                 <rect key="frame" x="0.0" y="0.0" width="69" height="69"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a3y-Dx-HIa">
+                        <rect key="frame" x="0.0" y="0.0" width="69" height="69"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </view>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="g41-f7-U3k">
                         <rect key="frame" x="12" y="5" width="45" height="45"/>
                         <constraints>
@@ -36,11 +40,16 @@
                     </label>
                 </subviews>
             </view>
+            <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
                 <constraint firstItem="g41-f7-U3k" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="5" id="3Vg-ey-64I"/>
                 <constraint firstItem="qwr-E7-5qA" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="5P7-Zo-n9l"/>
+                <constraint firstAttribute="bottom" secondItem="a3y-Dx-HIa" secondAttribute="bottom" id="5XJ-vL-PK0"/>
+                <constraint firstAttribute="trailing" secondItem="a3y-Dx-HIa" secondAttribute="trailing" id="CYi-3r-meK"/>
+                <constraint firstItem="a3y-Dx-HIa" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="LSS-5M-IbB"/>
                 <constraint firstItem="qwr-E7-5qA" firstAttribute="top" secondItem="g41-f7-U3k" secondAttribute="bottom" id="Zdf-7O-Hb8"/>
                 <constraint firstAttribute="trailing" secondItem="qwr-E7-5qA" secondAttribute="trailing" id="Zqs-o9-X9S"/>
+                <constraint firstItem="a3y-Dx-HIa" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="dNA-Ie-KJq"/>
                 <constraint firstAttribute="bottom" secondItem="qwr-E7-5qA" secondAttribute="bottom" id="kvw-zo-66B"/>
                 <constraint firstItem="g41-f7-U3k" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="owP-ZY-6WS"/>
             </constraints>

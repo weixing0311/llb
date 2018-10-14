@@ -173,7 +173,7 @@ UICollectionViewDelegateFlowLayout>
     self.collectionView.delegate = self;
     self.collectionView.alwaysBounceVertical = YES;//实现代理
     self.collectionView.dataSource = self;                  //实现数据源方法
-    self.collectionView.backgroundColor= HEXCOLOR(0xf8f8f8);
+    self.collectionView.backgroundColor= HEXCOLOR(0xFFFFFF);
     self.collectionView.allowsMultipleSelection = YES;      //实现多选，默认是NO
     
     
@@ -304,21 +304,24 @@ UICollectionViewDelegateFlowLayout>
         PublicGoodsCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"PublicGoodsCell" forIndexPath:indexPath];
         cell.backgroundColor = [UIColor whiteColor];
         [cell.goodsImg sd_setImageWithURL:[NSURL URLWithString:[dict safeObjectForKey:@"defPicture"]] placeholderImage:getImage(@"default_")];
-        
+        cell.backgroundColor = HEXCOLOR(0xeeeeee);
         cell.goodsStatelb.text = [dict safeObjectForKey:@"hotName"];
         
         
-        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        // 对齐方式
-        style.alignment = NSTextAlignmentJustified;
-        // 首行缩进
-        style.firstLineHeadIndent = 30.0f;
-        // 头部缩进
-        style.headIndent = 10.0f;
-        // 尾部缩进
-        style.tailIndent = -10.0f;
-        NSAttributedString *attrText = [[NSAttributedString alloc] initWithString:[dict safeObjectForKey:@"productName"] attributes:@{ NSParagraphStyleAttributeName : style}];
-        cell.goodstitlelb.attributedText = attrText;
+//        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+//        // 对齐方式
+//        style.alignment = NSTextAlignmentJustified;
+//        // 首行缩进
+//        style.firstLineHeadIndent = 30.0f;
+//        // 头部缩进
+//        style.headIndent = 10.0f;
+//        // 尾部缩进
+//        style.tailIndent = -10.0f;
+//        NSAttributedString *attrText = [[NSAttributedString alloc] initWithString:[dict safeObjectForKey:@"productName"] attributes:@{ NSParagraphStyleAttributeName : style}];
+        
+        
+        cell.goodsStatelb.text = @"";
+        cell.goodstitlelb.text = [dict safeObjectForKey:@"productName"];
         
         
         
@@ -343,7 +346,7 @@ UICollectionViewDelegateFlowLayout>
         return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2/1.45);
     }
     
-    return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2+80);
+    return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2+30);
 }
 //这个是两行cell之间的间距（上下行cell的间距）
 
@@ -394,7 +397,7 @@ UICollectionViewDelegateFlowLayout>
         
         NSString * timeStr = [NSString getNowTimeTimestamp3];
         NSString * productId = [dic safeObjectForKey:@"productNO"];
-        NSString * url = [NSString stringWithFormat:@"app/commodity.html?t=%@&productId=%@",timeStr,productId];
+        NSString * url = [NSString stringWithFormat:@"app/commodity.html?t=%@&productId=%@&groupId=&shopId=",timeStr,productId];
         gs.urlStr = url;
         [self.navigationController pushViewController:gs animated:YES];
     }
