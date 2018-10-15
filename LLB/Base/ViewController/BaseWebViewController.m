@@ -238,18 +238,7 @@
             return;
         }
         
-        if ([url containsString:@"weixin://wap/pay?"]) {
-            actionPolicy =WKNavigationActionPolicyCancel;
-//            WXAlipayController * wchatPay = [[WXAlipayController alloc]init];
-//            wchatPay.urlStr = url;
-//            wchatPay.orderNoUrl = self.wxPayCallBackUrl;
-//            [self.navigationController pushViewController:wchatPay animated:YES];
-            decisionHandler(WKNavigationActionPolicyAllow);
-            
-            
-            return;
-        }
-        
+ 
         
         
         if([url containsString:@"notify.jsp?"]&&![url containsString:@"https://openapi.alipay.com/gateway.do"] )//支付成功回调

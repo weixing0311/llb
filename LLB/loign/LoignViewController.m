@@ -83,9 +83,9 @@
             
         }];
     }]];
-    [al addAction:[UIAlertAction actionWithTitle:@"QQ登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-    }]];
+////    [al addAction:[UIAlertAction actionWithTitle:@"QQ登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//
+//    }]];
     [al addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:al animated:YES completion:^{
         
