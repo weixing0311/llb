@@ -6,7 +6,6 @@ pod 'AFNetworking', '~> 3.1.0'
 pod 'SVProgressHUD', '~> 2.1.2'
 pod 'SDWebImage', '~> 4.0.0'
 pod 'SDAutoLayout', '~> 2.1.8'
-pod 'MJRefresh', '~> 3.1.15'
+pod 'MJRefresh', '~> 3.1.12'
 pod 'RSAEncrypt', '~> 1.1.0'
-
 end

@@ -23,8 +23,8 @@
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-
-   BOOL resignVx = [WXApi registerApp:@"wxd6244bb1103dbdd7" withDescription:@"lilibang_ios_wx"];
+    [self remoViewCookies];
+   BOOL resignVx = [WXApi registerApp:@"wx79682ee9bdca1368" withDescription:@"lilibang_ios_wx"];
     
     if (resignVx ==YES) {
         DLog(@"微信注册成功");
@@ -86,6 +86,7 @@
 }
 -(void)onResp:(BaseResp *)resp
 {
+    DLog(@"微信返回---%@",resp);
     if ([resp isKindOfClass:[SendAuthResp class]]) {
         SendAuthResp * rsp = (SendAuthResp*)resp;
         if (rsp.errCode ==0) {
@@ -118,6 +119,25 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+-(void)remoViewCookies{
+    
+    
+    if ([UIDevice currentDevice].systemVersion.floatValue>=9.0) {
+        //        - (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation 中就成功了 。
+        //    然而我们等到了iOS9！！！没错！WKWebView的缓存清除API出来了！代码如下：这是删除所有缓存和cookie的
+        NSSet *websiteDataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
+        //// Date from
+        NSDate *dateFrom = [NSDate dateWithTimeIntervalSince1970:0];
+        //// Execute
+        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes modifiedSince:dateFrom completionHandler:^{
+        }];
+    }else{
+        //iOS8清除缓存
+        NSString * libraryPath =  NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
+        NSString * cookiesFolderPath = [libraryPath stringByAppendingString:@"/Cookies"];
+        [[NSFileManager defaultManager] removeItemAtPath:cookiesFolderPath error:nil];
+    }
 }
 
 

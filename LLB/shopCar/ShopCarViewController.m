@@ -13,6 +13,12 @@
 @end
 
 @implementation ShopCarViewController
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    [self.webView reload];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];

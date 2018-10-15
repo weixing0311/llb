@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		26F6EDBA216D99990095ECD8 /* SearchHistoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F6EDB8216D99990095ECD8 /* SearchHistoryCell.m */; };
+		26F6EDBB216D99990095ECD8 /* SearchHistoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 26F6EDB9216D99990095ECD8 /* SearchHistoryCell.xib */; };
 		6C211397214BA8850007CDE5 /* HomePageModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C211396214BA8850007CDE5 /* HomePageModel.m */; };
 		6C21139A214BA8E00007CDE5 /* BaseCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C211399214BA8E00007CDE5 /* BaseCollectionCell.m */; };
 		6C21139D214BA9210007CDE5 /* BaseTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C21139C214BA9210007CDE5 /* BaseTableViewController.m */; };
@@ -91,6 +93,9 @@
 
 /* Begin PBXFileReference section */
 		1482F0898684613729425175 /* libPods-LLB.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LLB.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		26F6EDB7216D99990095ECD8 /* SearchHistoryCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchHistoryCell.h; sourceTree = "<group>"; };
+		26F6EDB8216D99990095ECD8 /* SearchHistoryCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchHistoryCell.m; sourceTree = "<group>"; };
+		26F6EDB9216D99990095ECD8 /* SearchHistoryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchHistoryCell.xib; sourceTree = "<group>"; };
 		55B3AC9F8ABAAF3E14C5BD8F /* Pods-LLB.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LLB.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LLB/Pods-LLB.debug.xcconfig"; sourceTree = "<group>"; };
 		6C211395214BA8850007CDE5 /* HomePageModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomePageModel.h; sourceTree = "<group>"; };
 		6C211396214BA8850007CDE5 /* HomePageModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomePageModel.m; sourceTree = "<group>"; };
@@ -308,6 +313,9 @@
 				6C2115FE215A09B90007CDE5 /* SearchResultViewController.h */,
 				6C2115FF215A09B90007CDE5 /* SearchResultViewController.m */,
 				6C211600215A09B90007CDE5 /* SearchResultViewController.xib */,
+				26F6EDB7216D99990095ECD8 /* SearchHistoryCell.h */,
+				26F6EDB8216D99990095ECD8 /* SearchHistoryCell.m */,
+				26F6EDB9216D99990095ECD8 /* SearchHistoryCell.xib */,
 			);
 			path = searchView;
 			sourceTree = "<group>";
@@ -648,6 +656,7 @@
 			files = (
 				6CABCAA62149F863008A966F /* LoignViewController.xib in Resources */,
 				6C2113C82150D43A0007CDE5 /* HomeTitleCell.xib in Resources */,
+				26F6EDBB216D99990095ECD8 /* SearchHistoryCell.xib in Resources */,
 				6C2113C32150CF9B0007CDE5 /* HomeAdCell.xib in Resources */,
 				6C2113BB2150A1600007CDE5 /* ClassInfoCollectionViewCell.xib in Resources */,
 				6C2113B3214BBA550007CDE5 /* test1.png in Resources */,
@@ -674,6 +683,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -750,6 +760,7 @@
 				6C2113B621508D3D0007CDE5 /* BaseLoignViewController.m in Sources */,
 				6CABCADB214A49AE008A966F /* NSDate+CustomDate.m in Sources */,
 				6CABCADC214A49AE008A966F /* UINavigationController+CustomNavigationCotroller.m in Sources */,
+				26F6EDBA216D99990095ECD8 /* SearchHistoryCell.m in Sources */,
 				6CABCADD214A49AE008A966F /* UIView+Board.m in Sources */,
 				6C2113BA2150A1600007CDE5 /* ClassInfoCollectionViewCell.m in Sources */,
 				6C2113C72150D43A0007CDE5 /* HomeTitleCell.m in Sources */,
@@ -909,7 +920,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/LLB/Vende/open_sdk_for_lite_V3.3.3.0_svn35045_#34_201805231028/sdkDemo/sdkDemo/libs",
 				);
-				GCC_PREFIX_HEADER = /Users/cheer_haryy/Desktop/LLB/LLB/PrefixHeader.pch;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/LLB/PrefixHeader.pch";
 				INFOPLIST_FILE = LLB/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -937,7 +948,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/LLB/Vende/open_sdk_for_lite_V3.3.3.0_svn35045_#34_201805231028/sdkDemo/sdkDemo/libs",
 				);
-				GCC_PREFIX_HEADER = /Users/cheer_haryy/Desktop/LLB/LLB/PrefixHeader.pch;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/LLB/PrefixHeader.pch";
 				INFOPLIST_FILE = LLB/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

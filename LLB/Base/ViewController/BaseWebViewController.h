@@ -27,5 +27,6 @@ typedef enum
 @property (nonatomic,copy) NSString * wxPayCallBackUrl;
 
 -(void)didShowInfoWithMessage:(WKScriptMessage*)message;
+-(void)showTabbarWithUrl:(NSString *)url;
 
 @end

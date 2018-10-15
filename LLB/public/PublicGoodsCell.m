@@ -12,6 +12,8 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
+    self.buyBtn.layer.borderWidth = 1;
+    self.buyBtn.layer.borderColor = [UIColor redColor].CGColor;
     // Initialization code
 }
 

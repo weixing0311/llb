@@ -13,12 +13,25 @@
 @end
 
 @implementation MineViewController
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 }
-
+-(void)showTabbarWithUrl:(NSString *)url
+{
+    if ([url containsString:@"app/userInfo.html"]) {
+        self.tabBarController.tabBar.hidden = NO;
+    }else{
+        self.tabBarController.tabBar.hidden = YES;
+    }
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

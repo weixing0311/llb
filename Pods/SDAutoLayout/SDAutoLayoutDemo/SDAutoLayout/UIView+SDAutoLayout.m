@@ -25,17 +25,6 @@
 
 #import <objc/runtime.h>
 
-Class cellContVClass()
-{
-    // 为了应付SB审核的SB条款 The use of non-public APIs is not permitted on the App Store because it can lead to a poor user experience should these APIs change.
-    static UITableViewCell *tempCell;
-    
-    if (!tempCell) {
-        tempCell = [UITableViewCell new];
-    }
-    return [tempCell.contentView class];
-}
-
 @interface SDAutoLayoutModel ()
 
 @property (nonatomic, strong) SDAutoLayoutModelItem *width;
@@ -265,7 +254,7 @@ Class cellContVClass()
         item.refView = view;
         [weakSelf setValue:item forKey:key];
         weakSelf.lastModelItem = item;
-        if ([view isKindOfClass:cellContVClass()] && ([key isEqualToString:@"equalCenterY"] || [key isEqualToString:@"equalBottom"])) {
+        if ([view isKindOfClass:NSClassFromString(@"UITableViewCellContentView")] && ([key isEqualToString:@"equalCenterY"] || [key isEqualToString:@"equalBottom"])) {
             view.shouldReadjustFrameBeforeStoreCache = YES;
         }
         return weakSelf;
@@ -1119,7 +1108,7 @@ Class cellContVClass()
         
         NSMutableArray *caches = nil;
         
-        if ([self isKindOfClass:cellContVClass()] && self.sd_tableView) {
+        if ([self isKindOfClass:NSClassFromString(@"UITableViewCellContentView")] && self.sd_tableView) {
             caches = [self.sd_tableView.cellAutoHeightManager subviewFrameCachesWithIndexPath:self.sd_indexPath];
         }
         
@@ -1143,13 +1132,11 @@ Class cellContVClass()
         }];
     }
     
-    if (self.tag == kSDModelCellTag && [self isKindOfClass:cellContVClass()]) {
+    if (self.tag == kSDModelCellTag && [self isKindOfClass:NSClassFromString(@"UITableViewCellContentView")]) {
         UITableViewCell *cell = (UITableViewCell *)(self.superview);
-        
-        while (cell && ![cell isKindOfClass:[UITableViewCell class]]) {
+        if ([cell isKindOfClass:NSClassFromString(@"UITableViewCellScrollView")]) {
             cell = (UITableViewCell *)cell.superview;
         }
-        
         if ([cell isKindOfClass:[UITableViewCell class]]) {
             CGFloat height = 0;
             for (UIView *view in cell.sd_bottomViewsArray) {
