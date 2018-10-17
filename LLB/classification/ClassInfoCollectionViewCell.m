@@ -12,6 +12,7 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
+    self.titlelb.adjustsFontSizeToFitWidth = YES;
     // Initialization code
 }
 -(void)setModel:(ClassInofoModel *)model

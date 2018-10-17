@@ -25,6 +25,7 @@ typedef enum
 @property (nonatomic,copy)NSString * loginUrl;
 @property (nonatomic,strong) UIProgressView * progressView;
 @property (nonatomic,copy) NSString * wxPayCallBackUrl;
+@property (nonatomic,copy) NSString * orderUrl;
 
 -(void)didShowInfoWithMessage:(WKScriptMessage*)message;
 -(void)showTabbarWithUrl:(NSString *)url;

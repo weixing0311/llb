@@ -240,7 +240,7 @@ UICollectionViewDelegateFlowLayout>
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
     if (section ==0) {
-        return CGSizeMake(JFA_SCREEN_WIDTH, JFA_SCREEN_WIDTH/2);
+        return CGSizeMake(JFA_SCREEN_WIDTH, JFA_SCREEN_WIDTH/2.29);
     }
     else if (section ==1)
     {
@@ -307,25 +307,50 @@ UICollectionViewDelegateFlowLayout>
         cell.backgroundColor = HEXCOLOR(0xeeeeee);
         cell.goodsStatelb.text = [dict safeObjectForKey:@"hotName"];
         
-        
-//        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-//        // 对齐方式
-//        style.alignment = NSTextAlignmentJustified;
-//        // 首行缩进
-//        style.firstLineHeadIndent = 30.0f;
-//        // 头部缩进
-//        style.headIndent = 10.0f;
-//        // 尾部缩进
-//        style.tailIndent = -10.0f;
-//        NSAttributedString *attrText = [[NSAttributedString alloc] initWithString:[dict safeObjectForKey:@"productName"] attributes:@{ NSParagraphStyleAttributeName : style}];
+        int goodsCount  = [[dict safeObjectForKey:@"salesAmount"]intValue];
+        double vipPrice = [[dict safeObjectForKey:@"vipPrice"]doubleValue];
+        NSString * goodPrice = [dict safeObjectForKey:@"productPrice"];
+        int offsetPrice =[[dict safeObjectForKey:@"offsetPrice"]intValue];
         
         
-        cell.goodsStatelb.text = @"";
+        if (!goodsCount||goodsCount<1) {
+            cell.countlb.hidden = YES;
+        }else{
+            cell.countlb.hidden = NO;
+        }
+        
+        if (!vipPrice||vipPrice<1) {
+            cell.secPricelb.hidden = YES;
+            cell.secImg.hidden = YES;
+        }else{
+            cell.secPricelb.hidden = NO;
+            cell.secImg.hidden = NO;
+        }
+        if (offsetPrice<1) {
+            cell.quanbgView.hidden  = YES;
+            cell.quanlb.hidden = YES;
+        }else{
+            cell.quanbgView.hidden = NO;
+            cell.quanlb.hidden = NO;
+        }
+        
+        
+        
+        NSMutableAttributedString *str3 = [[NSMutableAttributedString alloc] initWithString: goodPrice]; //创建一个NSMutableAttributedString
+        
+        
+        [str3 addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:10.0f] range:NSMakeRange(str3.length-3,  2)]; //关键步骤，设置指定位置文字的字号大小
+        
+//        self.textLabel.attributedText = str3;
+
+        
+        
+        
+        cell.quanlb.text = [NSString stringWithFormat:@"可抵现%d元",offsetPrice];
+        cell.countlb.text = [NSString stringWithFormat:@"已售出%d件",goodsCount];
+        cell.secPricelb.text = [NSString stringWithFormat:@"￥%.1f",vipPrice];
         cell.goodstitlelb.text = [dict safeObjectForKey:@"productName"];
-        
-        
-        
-        cell.pricelb.text = [NSString stringWithFormat:@"￥%.1f",[[dict safeObjectForKey:@"productPrice"]doubleValue]];
+        cell.pricelb.text = [NSString stringWithFormat:@"￥%@",goodPrice];
         return cell;
         
     }
@@ -346,7 +371,7 @@ UICollectionViewDelegateFlowLayout>
         return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2/1.45);
     }
     
-    return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2+30);
+    return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2*0.8+80);
 }
 //这个是两行cell之间的间距（上下行cell的间距）
 
@@ -423,7 +448,7 @@ UICollectionViewDelegateFlowLayout>
 
         
         if (indexPath.section==0) {
-            adCar = [ADCarouselView carouselViewWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, JFA_SCREEN_WIDTH/2)];
+            adCar = [ADCarouselView carouselViewWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, JFA_SCREEN_WIDTH/2.29)];
             adCar.loop = YES;
             adCar.delegate = self;
             
@@ -443,15 +468,15 @@ UICollectionViewDelegateFlowLayout>
             
             
             UIView * searchView = [UIView new];
-            searchView.frame = CGRectMake(10,20 , JFA_SCREEN_WIDTH-40-40, 35);
+            searchView.frame = CGRectMake(10,10 , JFA_SCREEN_WIDTH-20, 30);
             searchView.backgroundColor = [UIColor whiteColor];
             searchView.layer.masksToBounds = YES;
-            searchView.layer.cornerRadius =17.5;
+            searchView.layer.cornerRadius =15;
 
             [headView addSubview:searchView];
 
             
-            UIImageView * imgV = [[UIImageView alloc]initWithFrame:CGRectMake(10, 7.5, 20, 20)];
+            UIImageView * imgV = [[UIImageView alloc]initWithFrame:CGRectMake(10, 8, 14, 14)];
             imgV.image = getImage(@"search_logo");
             [searchView addSubview:imgV];
             
@@ -460,20 +485,20 @@ UICollectionViewDelegateFlowLayout>
             
             
             UIButton * searchBtn = [UIButton new];
-            searchBtn.frame = CGRectMake(10,20 , JFA_SCREEN_WIDTH-70, 35);
+            searchBtn.frame = CGRectMake(0,20 , JFA_SCREEN_WIDTH-20, 30);
             [searchBtn addTarget:self action:@selector(didSearch) forControlEvents:UIControlEventTouchUpInside];
             [searchView addSubview:searchBtn];
             
-            UIButton * msgBtn = [UIButton new];
-        
-            msgBtn.frame = CGRectMake(JFA_SCREEN_WIDTH-50,20 , 35, 35);
-            msgBtn.layer.masksToBounds = YES;
-            msgBtn.layer.cornerRadius =17.5;
-
-            [msgBtn addTarget:self action:@selector(showMsg) forControlEvents:UIControlEventTouchUpInside];
-            msgBtn.backgroundColor = RGBACOLOR(225/225.0f, 225/225.0f, 225/225.0f, 0.6);
-            [msgBtn setImage:getImage(@"msg_") forState:UIControlStateNormal];
-            [headView addSubview:msgBtn];
+//            UIButton * msgBtn = [UIButton new];
+//
+//            msgBtn.frame = CGRectMake(JFA_SCREEN_WIDTH-50,20 , 35, 30);
+//            msgBtn.layer.masksToBounds = YES;
+//            msgBtn.layer.cornerRadius =17.5;
+//
+//            [msgBtn addTarget:self action:@selector(showMsg) forControlEvents:UIControlEventTouchUpInside];
+//            msgBtn.backgroundColor = RGBACOLOR(225/225.0f, 225/225.0f, 225/225.0f, 0.6);
+//            [msgBtn setImage:getImage(@"msg_") forState:UIControlStateNormal];
+//            [headView addSubview:msgBtn];
 
             
         }
@@ -486,7 +511,7 @@ UICollectionViewDelegateFlowLayout>
             
         }
         else if(indexPath.section==3){
-            UIImageView * image = [[UIImageView alloc]initWithFrame:CGRectMake(JFA_SCREEN_WIDTH/2-70, 15, 140, 20)];
+            UIImageView * image = [[UIImageView alloc]initWithFrame:CGRectMake(JFA_SCREEN_WIDTH/2-70, 15, 140, 18)];
             image.image = getImage(@"hot_goods_title_");
             [headView addSubview:image];
         }

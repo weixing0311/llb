@@ -48,7 +48,7 @@ UICollectionViewDelegateFlowLayout>
 {
     
     self.layout = [[UICollectionViewFlowLayout alloc]init];
-    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(80, 0, JFA_SCREEN_WIDTH-80,height(self.view)) collectionViewLayout:_layout];
+    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(80, 0, JFA_SCREEN_WIDTH-80,self.view.frame.size.height) collectionViewLayout:_layout];
     self.collectionView.delegate = self;
     self.collectionView.alwaysBounceVertical = YES;//实现代理
     self.collectionView.dataSource = self;                  //实现数据源方法

@@ -13,6 +13,16 @@
 @property (weak, nonatomic) IBOutlet UILabel *goodsStatelb;
 
 @property (weak, nonatomic) IBOutlet UILabel *goodstitlelb;
+@property (weak, nonatomic) IBOutlet UILabel *secPricelb;
 @property (weak, nonatomic) IBOutlet UIButton *buyBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *secImg;
 @property (weak, nonatomic) IBOutlet UILabel *pricelb;
+@property (weak, nonatomic) IBOutlet UILabel *countlb;
+
+@property (weak, nonatomic) IBOutlet UIImageView *hotImg;
+@property (weak, nonatomic) IBOutlet UIView *quanbgView;
+
+@property (weak, nonatomic) IBOutlet UILabel *quanlb;
+
+
 @end

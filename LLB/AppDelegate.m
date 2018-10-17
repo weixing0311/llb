@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "LoignViewController.h"
 #import "FirstTabbarViewController.h"
+#import "PaySuccessViewController.h"
 @interface AppDelegate ()<WXApiDelegate>
 
 @end
@@ -24,7 +25,7 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     [self remoViewCookies];
-   BOOL resignVx = [WXApi registerApp:@"wx79682ee9bdca1368" withDescription:@"lilibang_ios_wx"];
+   BOOL resignVx = [WXApi registerApp:kWeixinKey withDescription:@"lilibang_ios_wx"];
     
     if (resignVx ==YES) {
         DLog(@"微信注册成功");
@@ -33,16 +34,11 @@
     }
     [[UserModel shareInstance]readToDoc];
     
-//    if ([UserModel shareInstance].token.length>0) {
-        FirstTabbarViewController * fs =[[FirstTabbarViewController alloc]init];
-        [self.window setRootViewController:fs];
+    
+    FirstTabbarViewController * fs =[[FirstTabbarViewController alloc]init];
+    [self.window setRootViewController:fs];
 
-//    }else{
-//        lo = [[LoignViewController alloc]initWithNibName:@"LoignViewController" bundle:nil];
-//        [self.window setRootViewController:lo];
-//
-//    }
-//
+
     
 
     
@@ -52,7 +48,7 @@
 {
     [[UserModel shareInstance]removeAllObject];
     
-    UIAlertController *al = [UIAlertController alertControllerWithTitle:@"警告" message:@"有人在其他设备登录您的脂将军账号，本设备将会强制退出。如果这不是您本人操作，请立刻通过登录页面找回密码功能修改密码，慎防盗号。" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *al = [UIAlertController alertControllerWithTitle:@"警告" message:@"有人在其他设备登录您的账号，本设备将会强制退出。如果这不是您本人操作，请立刻通过登录页面找回密码功能修改密码，慎防盗号。" preferredStyle:UIAlertControllerStyleAlert];
     
     
     [al addAction:[UIAlertAction actionWithTitle:@"登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -78,6 +74,12 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
+    
+    if ([url.absoluteString isEqualToString:@"app.wwogou.com://"]) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshWXPayWebView" object:nil];
+        return YES;
+    }
+    
     return  [WXApi handleOpenURL:url delegate:self];
 }
 -(void)onReq:(BaseReq *)req
