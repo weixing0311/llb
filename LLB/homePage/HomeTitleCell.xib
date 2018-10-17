@@ -6,7 +6,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -25,15 +24,14 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="g41-f7-U3k">
-                        <rect key="frame" x="12" y="5" width="45" height="45"/>
+                        <rect key="frame" x="14.5" y="5" width="40" height="40"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="45" id="jGh-ZV-zsi"/>
-                            <constraint firstAttribute="width" secondItem="g41-f7-U3k" secondAttribute="height" multiplier="1:1" id="l8c-ek-NNm"/>
-                            <constraint firstAttribute="width" constant="45" id="zzo-gA-5hY"/>
+                            <constraint firstAttribute="height" constant="40" id="jGh-ZV-zsi"/>
+                            <constraint firstAttribute="width" constant="40" id="zzo-gA-5hY"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qwr-E7-5qA">
-                        <rect key="frame" x="0.0" y="50" width="69" height="19"/>
+                        <rect key="frame" x="0.0" y="45" width="69" height="24"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>

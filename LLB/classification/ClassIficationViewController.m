@@ -48,7 +48,7 @@ UICollectionViewDelegateFlowLayout>
 {
     
     self.layout = [[UICollectionViewFlowLayout alloc]init];
-    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(80, 0, JFA_SCREEN_WIDTH-80,height(self.view)) collectionViewLayout:_layout];
+    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(80, 0, JFA_SCREEN_WIDTH-80,self.view.frame.size.height) collectionViewLayout:_layout];
     self.collectionView.delegate = self;
     self.collectionView.alwaysBounceVertical = YES;//实现代理
     self.collectionView.dataSource = self;                  //实现数据源方法
@@ -92,7 +92,6 @@ UICollectionViewDelegateFlowLayout>
         
         
         [self.collectionView.mj_header endRefreshing];
-//        [self.collectionView.mj_footer endRefreshing];
         NSDictionary * dataDict =[dic safeObjectForKey:@"data"];
         
         NSArray * infoArr =[dataDict safeObjectForKey:@"classArray"];
@@ -102,7 +101,6 @@ UICollectionViewDelegateFlowLayout>
         [self.collectionView reloadData];
     } failure:^(NSError *error) {
         [self.collectionView.mj_header endRefreshing];
-//        [self.collectionView.mj_footer endRefreshing];
 
         [self.dataArray removeAllObjects];
         [self.collectionView reloadData];
@@ -185,7 +183,10 @@ UICollectionViewDelegateFlowLayout>
     }
     return _sectionArray;
 }
-
+-(void)headerRereshing
+{
+    [self getDataInfo];
+}
 
 -(void)setRefrshWithCollectionView:(UICollectionView *)co
 {
@@ -301,13 +302,10 @@ UICollectionViewDelegateFlowLayout>
     GoodsDetailViewController * gs = [[GoodsDetailViewController alloc]init];
     gs.hidesBottomBarWhenPushed = YES;
 
-    NSDictionary * dic = [NSDictionary dictionary];
     NSString * timeStr = [NSString getNowTimeTimestamp3];
 
     if (indexPath.section ==0) {
-        dic = [self.dataArray objectAtIndex:indexPath.row];
-        
-        
+        NSDictionary *dic = [self.dataArray objectAtIndex:indexPath.row];
         
         gs.urlStr =  [[NSString stringWithFormat:@"app/productList.html?t=%@&classId=%@&groupId=%@&name=%@",timeStr,[dic safeObjectForKey:@"id"],classId,[dic safeObjectForKey:@"className"]] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
         
@@ -315,11 +313,11 @@ UICollectionViewDelegateFlowLayout>
         
 
     }else{
-        dic = [self.brandArray objectAtIndex:indexPath.row];
+       NSDictionary * dic = [self.brandArray objectAtIndex:indexPath.row];
         
         NSString * nameStr = [dic safeObjectForKey:@"cname"];
         NSString * brandld = [dic safeObjectForKey:@"id"];
-        gs.urlStr =  [[NSString stringWithFormat:@"app/productList.html?t=%@&brandld=%@&name=%@",timeStr,brandld,nameStr] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+        gs.urlStr =  [[NSString stringWithFormat:@"app/productList.html?t=%@&brandId=%@&name=%@&classId=%@&groupId=",timeStr,brandld,nameStr,classId] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 
     }
     

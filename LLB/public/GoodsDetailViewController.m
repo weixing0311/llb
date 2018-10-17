@@ -16,7 +16,7 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
     
 }
 
@@ -29,7 +29,12 @@
     
     
 }
+-(void)popToRootWithPage:(int)page
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+        self.tabBarController.selectedIndex = page-1;
 
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

@@ -131,20 +131,21 @@ static UserModel *model;
     self.userId      = nil;
     self.token       = nil;
     self.nickName       = nil;
+    NSString *localPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *filePath = [localPath  stringByAppendingPathComponent:@"UserInfo.plist"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:filePath]) {
+        NSLog(@"文件abc.doc存在");
+        NSError * error;
+        [fileManager removeItemAtPath:filePath error:&error];
+        if (error) {
+            DLog(@"删除本地文件error-%@",error);
+        }
+    }
+    else {
+        NSLog(@"文件abc.doc不存在");
+    }
 
-//    self.infoDict    = nil;
-//    self.waist       = nil;
-//    self.hipline       = nil;
-//    self.identity       = nil;
-//    self.longLeg       = nil;
-//    self.shoulderWidth       = nil;
-//    self.weight       = nil;
-//    self.birthday       = nil;
-//    self.armLength       = nil;
-//    self.height       = nil;
-//    self.thigh       = nil;
-//    self.isPerfect       = nil;
-//    self.headImgUrl       = nil;
 
 }
 -(void)getUserInfoWithUserId:(NSString *)userId token:(NSString *)token

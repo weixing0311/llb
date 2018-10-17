@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		26F6EDBA216D99990095ECD8 /* SearchHistoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F6EDB8216D99990095ECD8 /* SearchHistoryCell.m */; };
 		26F6EDBB216D99990095ECD8 /* SearchHistoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 26F6EDB9216D99990095ECD8 /* SearchHistoryCell.xib */; };
+		26F6EDC221758CA90095ECD8 /* WXAlipayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F6EDBE2174B2D40095ECD8 /* WXAlipayController.m */; };
+		26F6EDC321758CA90095ECD8 /* PaySuccessViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F6EDC12174D1170095ECD8 /* PaySuccessViewController.m */; };
 		6C211397214BA8850007CDE5 /* HomePageModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C211396214BA8850007CDE5 /* HomePageModel.m */; };
 		6C21139A214BA8E00007CDE5 /* BaseCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C211399214BA8E00007CDE5 /* BaseCollectionCell.m */; };
 		6C21139D214BA9210007CDE5 /* BaseTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C21139C214BA9210007CDE5 /* BaseTableViewController.m */; };
@@ -96,6 +98,11 @@
 		26F6EDB7216D99990095ECD8 /* SearchHistoryCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchHistoryCell.h; sourceTree = "<group>"; };
 		26F6EDB8216D99990095ECD8 /* SearchHistoryCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchHistoryCell.m; sourceTree = "<group>"; };
 		26F6EDB9216D99990095ECD8 /* SearchHistoryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchHistoryCell.xib; sourceTree = "<group>"; };
+		26F6EDBD2174B2D40095ECD8 /* WXAlipayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WXAlipayController.h; sourceTree = "<group>"; };
+		26F6EDBE2174B2D40095ECD8 /* WXAlipayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WXAlipayController.m; sourceTree = "<group>"; };
+		26F6EDBF2174D1170095ECD8 /* PaySuccessViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaySuccessViewController.h; sourceTree = "<group>"; };
+		26F6EDC02174D1170095ECD8 /* PaySuccessViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PaySuccessViewController.xib; sourceTree = "<group>"; };
+		26F6EDC12174D1170095ECD8 /* PaySuccessViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaySuccessViewController.m; sourceTree = "<group>"; };
 		55B3AC9F8ABAAF3E14C5BD8F /* Pods-LLB.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LLB.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LLB/Pods-LLB.debug.xcconfig"; sourceTree = "<group>"; };
 		6C211395214BA8850007CDE5 /* HomePageModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomePageModel.h; sourceTree = "<group>"; };
 		6C211396214BA8850007CDE5 /* HomePageModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomePageModel.m; sourceTree = "<group>"; };
@@ -286,6 +293,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		26F6EDBC2174B2C50095ECD8 /* Pay */ = {
+			isa = PBXGroup;
+			children = (
+				26F6EDBD2174B2D40095ECD8 /* WXAlipayController.h */,
+				26F6EDBE2174B2D40095ECD8 /* WXAlipayController.m */,
+				26F6EDBF2174D1170095ECD8 /* PaySuccessViewController.h */,
+				26F6EDC12174D1170095ECD8 /* PaySuccessViewController.m */,
+				26F6EDC02174D1170095ECD8 /* PaySuccessViewController.xib */,
+			);
+			path = Pay;
+			sourceTree = "<group>";
+		};
 		465DADB0A6228E87521425DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -347,6 +366,7 @@
 				6CABCA8F2149F59B008A966F /* FirstTabbarViewController.m */,
 				6CABCA912149F5A6008A966F /* SecondTabbarViewController.h */,
 				6CABCA922149F5A6008A966F /* SecondTabbarViewController.m */,
+				26F6EDBC2174B2C50095ECD8 /* Pay */,
 				6C2115FD215A09A10007CDE5 /* searchView */,
 				6C2113A7214BB88C0007CDE5 /* public */,
 				6CABCAB0214A45BA008A966F /* shopCar */,
@@ -729,6 +749,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26F6EDC221758CA90095ECD8 /* WXAlipayController.m in Sources */,
+				26F6EDC321758CA90095ECD8 /* PaySuccessViewController.m in Sources */,
 				6CABCAC9214A49AE008A966F /* BaseViewController.m in Sources */,
 				6CABCACA214A49AE008A966F /* BaseWebViewController.m in Sources */,
 				6C211601215A09B90007CDE5 /* SearchResultViewController.m in Sources */,

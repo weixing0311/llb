@@ -38,8 +38,8 @@
     
     
     NSMutableDictionary * params =[NSMutableDictionary dictionary];
-    [params safeSetObject:@"wxd6244bb1103dbdd7" forKey:@"appid"];
-    [params safeSetObject:@"410fbbff0db4b0e1335a1a895054f981" forKey:@"secret"];
+    [params safeSetObject:kWeixinKey forKey:@"appid"];
+    [params safeSetObject:kWeixinSecret forKey:@"secret"];
     [params safeSetObject:[noti.userInfo objectForKey:@"code"] forKey:@"code"];
     [params safeSetObject:@"authorization_code" forKey:@"grant_type"];
     
@@ -83,9 +83,6 @@
             
         }];
     }]];
-////    [al addAction:[UIAlertAction actionWithTitle:@"QQ登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//
-//    }]];
     [al addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:al animated:YES completion:^{
         

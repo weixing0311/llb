@@ -14,14 +14,15 @@
 
 
 
-#define  weChatPayRefere @"com.llb"
+#define  weChatPayRefere @"app.wwogou.com"
 
-//#define kMyBaseUrl @"https://app.wwogou.com/"
+#define kMyBaseUrl @"https://app.wwogou.com/"
 //#define kMyBaseUrl @"http://192.168.1.104:8080/"
-#define kMyBaseUrl @"http://192.168.1.112:8080/"
+//#define kMyBaseUrl @"http://192.168.1.112:8080/"
 
 
-
+#define kWeixinKey @"wx79682ee9bdca1368"
+#define kWeixinSecret @"691de0cd36d464b4b473d92e1c2d91de"
 
 
 

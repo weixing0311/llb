@@ -207,7 +207,7 @@
                   success:(requestSuccessBlock)success
                   failure:(requestFailureBlock)failure
 {
-    DLog(@"request.Url-%@",[NSString stringWithFormat:@"%@%@",[self JFADomin],url]);
+    DLog(@"request.Url-%@",[NSString stringWithFormat:@"%@",url]);
     
     
     NSURLSessionTask * task = [manager POST:[NSString stringWithFormat:@"%@",url] parameters:paramters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {

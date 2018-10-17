@@ -17,7 +17,8 @@
 #import "BaseWebViewController.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "LoignViewController.h"
-#import "LoignViewController.h"
+#import "WXAlipayController.h"
+#import "PaySuccessViewController.h"
 @interface BaseWebViewController ()<WKUIDelegate,WKNavigationDelegate,WKScriptMessageHandler,UIGestureRecognizerDelegate,UIScrollViewDelegate>
 @end
 
@@ -26,6 +27,10 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    
+    
+    
     //    self.navigationController.navigationBar.hidden = YES;;
 //    [self.webView reload];
 }
@@ -35,9 +40,19 @@
     [SVProgressHUD dismiss];
     [self.webView stopLoading];
 }
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
+    
+    self.view.backgroundColor = [UIColor greenColor];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(enterWxPayResult) name:@"refreshWXPayWebView" object:nil];
+    
+    
     
 //    UIBarButtonItem * backItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back_"] style:UIBarButtonItemStylePlain target:self action:@selector(didClickBack)];
 //    self.navigationItem.leftBarButtonItem = backItem;
@@ -83,6 +98,7 @@
     [userContentController addScriptMessageHandler:self name:@"share"];
     [userContentController addScriptMessageHandler:self name:@"getCheckHeader"];
     [userContentController addScriptMessageHandler:self name:@"pay"];
+    [userContentController addScriptMessageHandler:self name:@"exitToRoot"];
 
 
     configuration.userContentController = userContentController;
@@ -91,6 +107,8 @@
     preferences.javaScriptCanOpenWindowsAutomatically = YES;
 //    preferences.minimumFontSize = 40.0;
     configuration.preferences = preferences;
+    
+    
     
     
 
@@ -108,7 +126,20 @@
         urlss = [kMyBaseUrl stringByAppendingString:self.urlStr];
     }
     
+    if ([urlss containsString:@"https://wx.tenpay.com"] ) {
+        if ([urlss containsString:@"redirect_url"]) {
+            
+            NSDictionary *dic =[self getURLParameters:urlss];
+            DLog(@"%@",dic);
+//            self.wxPayCallBackUrl = [dic safeObjectForKey:@"redirect_url"];
+            NSArray *array = [urlss componentsSeparatedByString:@"?"]; //从字符A中分隔成2个元素的数组
+            
+            urlss =[NSString stringWithFormat:@"%@?package=%@&prepay_id=%@",array[0],[dic safeObjectForKey:@"package"],[dic safeObjectForKey:@"prepay_id"]];
+        }
+    }
 
+    
+    
     NSURL * url  =[NSURL URLWithString:urlss];
     self.webView.UIDelegate = self;
     self.webView.navigationDelegate = self;
@@ -117,12 +148,33 @@
     DLog(@"webUrl = %@",url);
     [self.view addSubview:self.webView];
 
-    [self buildProgressView];
+//    [self buildProgressView];
     
     
     NSURLRequest * request = [NSURLRequest requestWithURL:url];
-    [self.webView loadRequest:request] ;
-        
+    if ([urlss containsString:@"https://wx.tenpay.com"]) {
+        NSDictionary *headers = [request allHTTPHeaderFields];
+        BOOL hasReferer = [headers objectForKey:@"Referer"]!=nil;
+        if (hasReferer) {
+            // .. is this my referer?
+        } else {
+            // relaunch with a modified request
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSURL *url = [request URL];
+                    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
+                    [request setHTTPMethod:@"GET"];
+                    NSString * referer = [NSString stringWithFormat:@"%@://",weChatPayRefere];
+                    
+                    [request setValue:referer forHTTPHeaderField: @"Referer"];
+                    [self.webView loadRequest:request] ;
+                });
+            });
+        }
+    }else{
+        [self.webView loadRequest:request] ;
+    }
+
 
 //        [self.webView loadRequest:request] ;
 
@@ -198,71 +250,25 @@
         NSLog(@"%@",dataStr);
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ NSString stringWithFormat:@"alipay://alipayclient/?%@",[self encodeString:dataStr]]]];// 对参数进行urlencode，拼接上scheme。
         
-        
-        
-        if ([url containsString:@"alipay://"]) {
-            NSString* dataStr=[url substringFromIndex:23];
-            NSLog(@"%@",dataStr);
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ NSString stringWithFormat:@"alipay://alipayclient/?%@",[self encodeString:dataStr]]]];// 对参数进行urlencode，拼接上scheme。
-            
-            
             
             decisionHandler(WKNavigationActionPolicyAllow);
-            return;
-        }
-        
- 
-        
-        
-        if([url containsString:@"notify.jsp?"]&&![url containsString:@"https://openapi.alipay.com/gateway.do"] )//支付成功回调
-        {
-            NSDictionary * urlDict = [self getURLParameters:url];
-            
-            int orderType = [[urlDict safeObjectForKey:@"orderType"]intValue];
-            orderType=3;
-            
-            
-//            PaySuccessViewController * pas = [[PaySuccessViewController alloc]init];
-//            pas.orderType = orderType;
-//            pas.paySuccess = YES;
-//            [self.navigationController pushViewController:pas animated:YES];
-            
-            decisionHandler(WKNavigationActionPolicyAllow);
-            
-            return;
-        }
-        if([url containsString:@"notifyFail.jsp?"])//支付失败回调
-        {
-            NSDictionary * urlDict = [self getURLParameters:url];
-            
-            int orderType = [[urlDict safeObjectForKey:@"orderType"]intValue];
-            orderType=3;
-            
-//            PaySuccessViewController * pas = [[PaySuccessViewController alloc]init];
-//            pas.orderType = orderType;
-//            pas.paySuccess = NO;
-//            [self.navigationController pushViewController:pas animated:YES];
-            
-            decisionHandler(WKNavigationActionPolicyAllow);
-            
             return;
         }
 
-        
-        
-        
-        
-        
-        decisionHandler(WKNavigationActionPolicyAllow);
-        return;
-    }
     
     if ([url containsString:@"weixin://wap/pay?"]) {
-        actionPolicy =WKNavigationActionPolicyCancel;
-//        WXAlipayController * wchatPay = [[WXAlipayController alloc]init];
-//        wchatPay.urlStr = url;
-//        wchatPay.orderNoUrl = self.wxPayCallBackUrl;
-//        [self.navigationController pushViewController:wchatPay animated:YES];
+        
+        if ([[UIApplication sharedApplication]respondsToSelector:@selector(openURL:options:completionHandler:)]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url] options:@{UIApplicationOpenURLOptionUniversalLinksOnly: @NO} completionHandler:^(BOOL success) {
+                
+                
+                DLog(@"微信支付返回");
+                
+            }];
+        } else {
+            [[UIApplication sharedApplication]openURL:[NSURL URLWithString:url]];
+        }
+
         decisionHandler(WKNavigationActionPolicyAllow);
         
         
@@ -306,6 +312,7 @@
         return;
     }
     
+   
     
     decisionHandler(WKNavigationActionPolicyAllow);
 }
@@ -457,6 +464,11 @@
     } else if ([message.name isEqualToString:@"exit"]) {
         [self exit];
     }
+    else if([message.name isEqualToString:@"exitToRoot"])
+    {
+        [self exitToroot:message.body];
+    }
+    
     //隐藏Loading
     else if ([message.name isEqualToString:@"hideLoad"]) {
         
@@ -578,8 +590,16 @@
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
-
-
+-(void)exitToroot:(id)messagee
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+//    NSArray * arr =self.navigationController.viewControllers;
+//    [self.navigationController popToViewController:arr[0] animated:YES];
+}
+-(void)popToRootWithPage:(int)page
+{
+    
+}
 
 /**
  *弹窗 alert
@@ -611,8 +631,10 @@
 {
 //    [[NSUserDefaults standardUserDefaults]removeObjectForKey:kMyloignInfo];
     [[UserModel shareInstance]removeAllObject];
-    LoignViewController *lo = [[LoignViewController alloc]init];
-    self.view.window.rootViewController = lo;
+    [self.webView goBack];
+//    [self.navigationController popToRootViewControllerAnimated:YES];
+//    LoignViewController *lo = [[LoignViewController alloc]init];
+//    self.view.window.rootViewController = lo;
 }
 
 -(void)getSource
@@ -843,86 +865,53 @@
 //    orderUrl 配合payFlag使用 在payFlag为1的情况下需要
 //    payFlag 与 orderUrl场景说明：在支付完成之后需要跳转到订单页面
     
+
     NSString * platform = [infoDict safeObjectForKey:@"platform"];
     NSString * url = [infoDict safeObjectForKey:@"url"];
 //    NSString * payFlag = [infoDict safeObjectForKey:@"payFlag"];
 //    NSString * orderType = [infoDict safeObjectForKey:@"orderType"];
-//    NSString * orderUrl = [infoDict safeObjectForKey:@"orderUrl"];
+    self.wxPayCallBackUrl = [infoDict safeObjectForKey:@"redirectUri"];
+    self.orderUrl = [infoDict safeObjectForKey:@"orderUrl"];
 
     
-    if ([platform isEqualToString:@"1"]) {
-        
-        
-        
-        
-    }
-    else if ([platform isEqualToString:@"2"])
-    {
-        if ([url containsString:@"redirect_url"]) {
-            
-            NSDictionary *dict =[self getURLParameters:url];
-            DLog(@"%@",dict);
-            self.wxPayCallBackUrl = [dict safeObjectForKey:@"redirect_url"];
-            NSArray *array = [url componentsSeparatedByString:@"?"]; //从字符A中分隔成2个元素的数组
-            
-            url =[NSString stringWithFormat:@"%@?package=%@&prepay_id=%@",array[0],[dict safeObjectForKey:@"package"],[dict safeObjectForKey:@"prepay_id"]];
-        }
-        if ([url containsString:@"https://wx.tenpay.com"]) {
-            NSURLRequest * request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-
-            NSDictionary *headers = [request allHTTPHeaderFields];
-            BOOL hasReferer = [headers objectForKey:@"Referer"]!=nil;
-            if (hasReferer) {
-                // .. is this my referer?
-            } else {
-                // relaunch with a modified request
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        NSURL *url = [request URL];
-                        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
-                        [request setHTTPMethod:@"GET"];
-                        
-                        NSString * referer = [NSString stringWithFormat:@"%@://",weChatPayRefere];
-                        
-                        [request setValue:referer forHTTPHeaderField: @"Referer"];
-//                        [self.webView loadRequest:request] ;
-                    });
-                });
-            }
-        }
-
-    }
-    else if([platform isEqualToString:@"3"])
-    {
-        
-        
-    }
-    NSURLRequest * request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [self.webView loadRequest:request];
+    
+    BaseWebViewController * web = [[BaseWebViewController alloc]init];
+    web.title  = @"";
+    web.urlStr = url;
+    web.wxPayCallBackUrl = self.wxPayCallBackUrl;
+    web.orderUrl = self.orderUrl;
+    [self.navigationController pushViewController:web animated:YES];
 
     
     
 }
--(void)payCallBackWithInfo:(NSDictionary *)infoDict
+-(void)payCallBackWithInfo:(id )infoDict
 {
-    NSString * payStatus =[infoDict safeObjectForKey:@"payStatus"];
-    if ([payStatus isEqualToString:@"1"]) {
-        ///成功
-    }
-    else if ([payStatus isEqualToString:@"2"])
-    {
-//        失败
-    }else if ([payStatus isEqualToString:@"3"])
-    {
-//        取消
-    }
+    
+    DLog(@"payCallBack ---%@",infoDict);
+    BaseWebViewController  * pay =[[BaseWebViewController alloc]init];
+    pay.urlStr =self.orderUrl;
+    [self.navigationController pushViewController:pay animated:YES];
 }
 
 -(void)showTabbarWithUrl:(NSString *)url
 {
     
 }
+-(void)enterWxPayResult
+{
+    if ([self.urlStr isEqualToString:self.wxPayCallBackUrl]) {
+        return;
+    }
+    DLog(@"调用次数------------------------------------------------%@",self.orderUrl);
 
+    BaseWebViewController  * pay =[[BaseWebViewController alloc]init];
+    pay.urlStr =self.wxPayCallBackUrl;
+    pay.wxPayCallBackUrl = self.wxPayCallBackUrl;
+    pay.orderUrl = self.orderUrl;
+    [self.navigationController pushViewController:pay animated:YES];
+
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

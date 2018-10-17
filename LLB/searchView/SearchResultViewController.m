@@ -17,7 +17,6 @@ UICollectionViewDelegateFlowLayout,
 UITextFieldDelegate
 >
 @property (weak, nonatomic) IBOutlet UITextField                * searchtf;
-@property (weak, nonatomic) IBOutlet UIView                     * bgView;
 @property (weak, nonatomic) IBOutlet UICollectionViewFlowLayout * layout;
 @property (weak, nonatomic) IBOutlet UICollectionView           * collectionView;
 @property (nonatomic,strong)         NSMutableArray             * dataArray;
@@ -28,10 +27,19 @@ UITextFieldDelegate
 {
     NSInteger page;
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.dataArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"searchHistoryUserDefaults"];
+    [self.collectionView reloadData];
+    
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     self.dataArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"searchHistoryUserDefaults"];
+
+    // Do any additional setup after loading the view from its nib.
     self.searchtf.delegate = self;
     [self.searchtf becomeFirstResponder];
     self.collectionView.delegate = self;
@@ -40,41 +48,12 @@ UITextFieldDelegate
     self.collectionView.backgroundColor= HEXCOLOR(0xf8f8f8);
     self.collectionView.allowsMultipleSelection = YES;      //实现多选，默认是NO
     [self.collectionView registerNib:[UINib nibWithNibName:@"SearchHistoryCell" bundle:nil]forCellWithReuseIdentifier: @"SearchHistoryCell"];
-    self.bgView.hidden = YES;
-    [self.bgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenIts)]];
-    self.collectionView.mj_header =  [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerRereshing)];
     [self.collectionView.mj_header beginRefreshing];
 }
 
--(void)headerRereshing
-{
-    page = 1;
-    [self getDataInfo];
-}
-
--(void)getDataInfo
-{
-//
-    NSMutableDictionary *params =[NSMutableDictionary dictionary];
-    [params safeSetObject:@"100" forKey:@"pageSize"];
-    [params safeSetObject:@(page) forKey:@"pageSize"];
-    [params safeSetObject:@"10" forKey:@"productName"];
-
-    [[BaseSerVice sharedManager]post:@"api/product/queryLikeProductList.do" paramters:params success:^(NSDictionary *dic) {
-        
-    } failure:^(NSError *error) {
-        
-    }];
-}
 
 - (IBAction)didBack:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
-}
--(void)hiddenIts
-{
-    self.bgView.hidden = YES;
-    [self.searchtf resignFirstResponder];
-    
 }
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -110,7 +89,7 @@ UITextFieldDelegate
 {
     NSString * searchTextStr = [self.dataArray objectAtIndex:indexPath.row];
     float width = [searchTextStr widthForLabelWithHeight:30 isFont:[UIFont systemFontOfSize:15]];
-    return CGSizeMake(width,30 );
+    return CGSizeMake(width+10,30);
 }
 //这个是两行cell之间的间距（上下行cell的间距）
 
@@ -131,18 +110,17 @@ UITextFieldDelegate
 }
 
 
--(void)textFieldDidBeginEditing:(UITextField *)textField
-{
-    self.bgView.hidden = NO;
-}
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    self.bgView.hidden = YES;
     
     if (self.searchtf.text.length>1) {
-        NSMutableArray * arr = [[NSUserDefaults standardUserDefaults]objectForKey:@"searchHistoryUserDefaults"];
+        NSMutableArray * arr = [NSMutableArray array];
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"searchHistoryUserDefaults"]) {
+            [arr addObjectsFromArray: [[NSUserDefaults standardUserDefaults]objectForKey:@"searchHistoryUserDefaults"]];
+        }
         [arr insertObject:self.searchtf.text atIndex:0];
+        
         [[NSUserDefaults standardUserDefaults]setObject:arr forKey:@"searchHistoryUserDefaults"];
     }
     
