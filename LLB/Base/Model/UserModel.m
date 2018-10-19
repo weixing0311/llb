@@ -33,18 +33,6 @@ static UserModel *model;
     self.token       = [dict safeObjectForKey:@"token"];
     self.nickName       = [dict safeObjectForKey:@"name"];
 
-//    self.waist       = [dict safeObjectForKey:@"waist"];
-//    self.hipline       = [dict safeObjectForKey:@"hipline"];
-//    self.identity       = [dict safeObjectForKey:@"identity"];
-//    self.longLeg       = [dict safeObjectForKey:@"longLeg"];
-//    self.shoulderWidth       = [dict safeObjectForKey:@"shoulderWidth"];
-//    self.weight       = [dict safeObjectForKey:@"weight"];
-//    self.birthday       = [dict safeObjectForKey:@"birthday"];
-//    self.armLength       = [dict safeObjectForKey:@"armLength"];
-//    self.height       = [dict safeObjectForKey:@"height"];
-//    self.thigh       = [dict safeObjectForKey:@"thigh"];
-//    self.isPerfect       = [dict safeObjectForKey:@"isPerfect"];
-//    self.headImgUrl       = [dict safeObjectForKey:@"headImgUrl"];
 
     [self writeToDoc];
     
@@ -64,28 +52,6 @@ static UserModel *model;
     [dict safeSetObject:self.token forKey:@"token"];
     [dict safeSetObject:self.nickName forKey:@"nickName"];
 
-//    [dict safeSetObject:self.infoDict forKey:@"infoDict"];
-//    [dict safeSetObject:self.waist forKey:@"waist"];
-//    [dict safeSetObject:self.hipline forKey:@"hipline"];
-//    [dict safeSetObject:self.identity forKey:@"identity"];
-//    [dict safeSetObject:self.longLeg forKey:@"longLeg"];
-//    [dict safeSetObject:self.shoulderWidth forKey:@"shoulderWidth"];
-//    [dict safeSetObject:self.weight forKey:@"weight"];
-//    [dict safeSetObject:self.birthday forKey:@"birthday"];
-//    [dict safeSetObject:self.armLength forKey:@"armLength"];
-//    [dict safeSetObject:self.height forKey:@"height"];
-//    [dict safeSetObject:self.thigh forKey:@"thigh"];
-//    [dict safeSetObject:self.isPerfect forKey:@"isPerfect"];
-//    [dict safeSetObject:self.headImgUrl forKey:@"headImgUrl"];
-
-
-    
-    
-    
-    
-    
-    
-    
     
     NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
     NSString *filePath = [path stringByAppendingPathComponent:@"UserInfo.plist"];
@@ -102,20 +68,6 @@ static UserModel *model;
     self.userId      = [dict safeObjectForKey:@"userId"];
     self.token       = [dict safeObjectForKey:@"token"];
     self.nickName       = [dict safeObjectForKey:@"nickName"];
-
-//    self.infoDict    = [dict safeObjectForKey:@"infoDict"];
-//    self.waist       = [dict safeObjectForKey:@"waist"];
-//    self.hipline       = [dict safeObjectForKey:@"hipline"];
-//    self.identity       = [dict safeObjectForKey:@"identity"];
-//    self.longLeg       = [dict safeObjectForKey:@"longLeg"];
-//    self.shoulderWidth       = [dict safeObjectForKey:@"shoulderWidth"];
-//    self.weight       = [dict safeObjectForKey:@"weight"];
-//    self.birthday       = [dict safeObjectForKey:@"birthday"];
-//    self.armLength       = [dict safeObjectForKey:@"armLength"];
-//    self.height       = [dict safeObjectForKey:@"height"];
-//    self.thigh       = [dict safeObjectForKey:@"thigh"];
-//    self.isPerfect       = [dict safeObjectForKey:@"isPerfect"];
-//    self.headImgUrl       = [dict safeObjectForKey:@"headImgUrl"];
 
 }
 
@@ -153,7 +105,7 @@ static UserModel *model;
     NSMutableDictionary * params =[NSMutableDictionary dictionary];
     [params safeSetObject:userId forKey:@"userId"];
     [params safeSetObject:token forKey:@"token"];
-    [[BaseSerVice sharedManager]post:@"" paramters:params success:^(NSDictionary *dic) {
+    [[BaseSerVice sharedManager]post:@""  hiddenHud:NO paramters:params success:^(NSDictionary *dic) {
         
     } failure:^(NSError *error) {
         
@@ -191,6 +143,29 @@ static UserModel *model;
 -(void)dismiss
 {
     [SVProgressHUD dismiss];
+}
+-(void)getUpdateInfo
+{
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    int  bundleVersion =[[infoDictionary objectForKey:@"CFBundleVersion"]intValue];
+    
+    
+    NSMutableDictionary * params = [NSMutableDictionary dictionary];
+    [params safeSetObject:@(bundleVersion) forKey:@"code"];
+    [params safeSetObject:@"2" forKey:@"source"];
+    
+    [[BaseSerVice sharedManager]post:@"api/isForce/judgeVersion.do" hiddenHud:YES paramters:params success:^(NSDictionary *dic) {
+        DLog(@"更新信息————%@",dic);
+        
+        NSString * update = [NSString stringWithFormat:@"%@",[[dic safeObjectForKey:@"data"]objectForKey:@"isUpdate"]];
+        if ([update isEqualToString:@"1"]) {
+            [(AppDelegate *)[UIApplication sharedApplication].delegate showUpdateAlertViewWithMessage:[[dic safeObjectForKey:@"data"]objectForKey:@"message"]];
+        }
+    } failure:^(NSError *error) {
+        
+    }];
+    
+    
 }
 
 

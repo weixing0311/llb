@@ -29,6 +29,7 @@ typedef void (^requestFailureBlock)(NSError *error);
 
 
 -(NSURLSessionTask*)post:(NSString*)url
+               hiddenHud:(BOOL)hudHidden
                paramters:(NSMutableDictionary *)paramters
                  success:(requestSuccessBlock)success
                  failure:(requestFailureBlock)failure;

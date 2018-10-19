@@ -13,6 +13,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *sendSMSBtn;
 @property (weak, nonatomic) IBOutlet UITextField *phoneNumTf;
 @property (weak, nonatomic) IBOutlet UITextField *smsTf;
+@property (weak, nonatomic) IBOutlet UILabel *titlelb;
+@property (weak, nonatomic) IBOutlet UIButton *loginbtn;
 
 @end
 
@@ -22,8 +24,35 @@
     NSInteger timeNumber;
     
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.loginInfoDict  = [NSDictionary dictionary];
+
+    }
+    return self;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    if (self.isLogin==YES) {
+        self.title = @"手机号登录";
+        [self.loginbtn setTitle:@"登录" forState:UIControlStateNormal];
+    }else{
+        self.title = @"绑定手机号";
+        [self.loginbtn setTitle:@"绑定" forState:UIControlStateNormal];
+    }
+    
+    
+    
     // Do any additional setup after loading the view from its nib.
 }
 - (IBAction)sendSMS:(id)sender {
@@ -33,8 +62,7 @@
     
     NSMutableDictionary *param =[ NSMutableDictionary dictionary];
     [param setObject:self.phoneNumTf.text forKey:@"mobile"];
-    
-    [[BaseSerVice sharedManager]post:@"api/user/sendSMS.do" paramters:param success:^(NSDictionary *dic) {
+    [[BaseSerVice sharedManager]post:@"api/user/sendSMS.do" hiddenHud:NO paramters:param success:^(NSDictionary *dic) {
         NSDictionary *dict = dic;
         NSString * status = [dict objectForKey:@"status"];
         NSString * msg ;
@@ -88,10 +116,41 @@
     NSString * phone = [NSString stringWithFormat:@"%@",self.phoneNumTf.text];
     NSString * encryPhoneNum = [NSString encryptString:phone];
 
-    [self didLoignLastWithType:@"1" content:phone msm:self.smsTf.text];
+    if (self.isLogin ==YES) {
+        [self didLoignLastWithType:@"1" content:phone msm:self.smsTf.text];
+
+    }else{
+        [self bind];
+    }
     
 
 }
+
+-(void)bind
+{
+    NSMutableDictionary *param =[ NSMutableDictionary dictionary];
+    [param setObject:self.phoneNumTf.text forKey:@"mobile"];
+    [param safeSetObject:[self.loginInfoDict safeObjectForKey:@"userId"] forKey:@"userId"];
+    [param safeSetObject:self.smsTf.text forKey:@"msg"];
+    DLog(@"param--%@",param);
+    [SVProgressHUD showWithStatus:@"绑定中。。。"];
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeGradient];
+    
+    [[BaseSerVice sharedManager]post:@"api/user/bindMobile.do" hiddenHud:NO paramters:param  success:^(NSDictionary *dic) {
+        [SVProgressHUD dismiss];
+        [[UserModel shareInstance] showSuccessWithStatus:@"绑定成功"];
+        [[UserModel shareInstance]setInfoWithDic:[dic safeObjectForKey:@"data"]];
+        
+        FirstTabbarViewController *tab = [[FirstTabbarViewController alloc]init];
+        self.view.window.rootViewController = tab;
+    } failure:^(NSError *error) {
+        
+    }];
+
+}
+
+
+
 - (IBAction)showInfomation:(id)sender {
 }
 

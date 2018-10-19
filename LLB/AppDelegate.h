@@ -12,6 +12,6 @@
 
 @property (strong, nonatomic) UIWindow *window;
 -(void)loignOut;
-
+-(void)showUpdateAlertViewWithMessage:(NSString *)message;
 @end
 

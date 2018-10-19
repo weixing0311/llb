@@ -32,6 +32,15 @@
 		6C2115FC2159CC4E0007CDE5 /* GoodsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C2115FB2159CC4E0007CDE5 /* GoodsDetailViewController.m */; };
 		6C211601215A09B90007CDE5 /* SearchResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C2115FF215A09B90007CDE5 /* SearchResultViewController.m */; };
 		6C211602215A09B90007CDE5 /* SearchResultViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C211600215A09B90007CDE5 /* SearchResultViewController.xib */; };
+		6C98BF5A2177248E0083F982 /* ClassInfoTbCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C98BF582177248E0083F982 /* ClassInfoTbCell.m */; };
+		6C98BF5B2177248E0083F982 /* ClassInfoTbCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C98BF592177248E0083F982 /* ClassInfoTbCell.xib */; };
+		6C98BF5E217739520083F982 /* PayingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C98BF5D217739520083F982 /* PayingViewController.m */; };
+		6C98BF6121773B160083F982 /* OrderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C98BF6021773B160083F982 /* OrderViewController.m */; };
+		6C98BF6621774C450083F982 /* AdvertisingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C98BF6321774C440083F982 /* AdvertisingView.xib */; };
+		6C98BF6721774C450083F982 /* AdvertisingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C98BF6421774C450083F982 /* AdvertisingView.m */; };
+		6C98BF6B21781A540083F982 /* UpdateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C98BF6921781A540083F982 /* UpdateViewController.m */; };
+		6C98BF6C21781A540083F982 /* UpdateViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C98BF6A21781A540083F982 /* UpdateViewController.xib */; };
+		6C98BF6F2178295D0083F982 /* PrivacyAgreementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C98BF6E2178295D0083F982 /* PrivacyAgreementViewController.m */; };
 		6CABCA312149F221008A966F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CABCA302149F221008A966F /* AppDelegate.m */; };
 		6CABCA392149F221008A966F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CABCA382149F221008A966F /* Assets.xcassets */; };
 		6CABCA3F2149F221008A966F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CABCA3E2149F221008A966F /* main.m */; };
@@ -139,6 +148,21 @@
 		6C2115FE215A09B90007CDE5 /* SearchResultViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResultViewController.h; sourceTree = "<group>"; };
 		6C2115FF215A09B90007CDE5 /* SearchResultViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResultViewController.m; sourceTree = "<group>"; };
 		6C211600215A09B90007CDE5 /* SearchResultViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchResultViewController.xib; sourceTree = "<group>"; };
+		6C98BF572177248E0083F982 /* ClassInfoTbCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClassInfoTbCell.h; sourceTree = "<group>"; };
+		6C98BF582177248E0083F982 /* ClassInfoTbCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClassInfoTbCell.m; sourceTree = "<group>"; };
+		6C98BF592177248E0083F982 /* ClassInfoTbCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ClassInfoTbCell.xib; sourceTree = "<group>"; };
+		6C98BF5C217739520083F982 /* PayingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PayingViewController.h; sourceTree = "<group>"; };
+		6C98BF5D217739520083F982 /* PayingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PayingViewController.m; sourceTree = "<group>"; };
+		6C98BF5F21773B160083F982 /* OrderViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrderViewController.h; sourceTree = "<group>"; };
+		6C98BF6021773B160083F982 /* OrderViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OrderViewController.m; sourceTree = "<group>"; };
+		6C98BF6321774C440083F982 /* AdvertisingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AdvertisingView.xib; sourceTree = "<group>"; };
+		6C98BF6421774C450083F982 /* AdvertisingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdvertisingView.m; sourceTree = "<group>"; };
+		6C98BF6521774C450083F982 /* AdvertisingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdvertisingView.h; sourceTree = "<group>"; };
+		6C98BF6821781A540083F982 /* UpdateViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UpdateViewController.h; sourceTree = "<group>"; };
+		6C98BF6921781A540083F982 /* UpdateViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UpdateViewController.m; sourceTree = "<group>"; };
+		6C98BF6A21781A540083F982 /* UpdateViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UpdateViewController.xib; sourceTree = "<group>"; };
+		6C98BF6D2178295D0083F982 /* PrivacyAgreementViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivacyAgreementViewController.h; sourceTree = "<group>"; };
+		6C98BF6E2178295D0083F982 /* PrivacyAgreementViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrivacyAgreementViewController.m; sourceTree = "<group>"; };
 		6CABCA2C2149F221008A966F /* LLB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LLB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CABCA2F2149F221008A966F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6CABCA302149F221008A966F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -301,6 +325,10 @@
 				26F6EDBF2174D1170095ECD8 /* PaySuccessViewController.h */,
 				26F6EDC12174D1170095ECD8 /* PaySuccessViewController.m */,
 				26F6EDC02174D1170095ECD8 /* PaySuccessViewController.xib */,
+				6C98BF5C217739520083F982 /* PayingViewController.h */,
+				6C98BF5D217739520083F982 /* PayingViewController.m */,
+				6C98BF5F21773B160083F982 /* OrderViewController.h */,
+				6C98BF6021773B160083F982 /* OrderViewController.m */,
 			);
 			path = Pay;
 			sourceTree = "<group>";
@@ -322,6 +350,11 @@
 				6C2113AA214BB8A90007CDE5 /* PublicGoodsCell.xib */,
 				6C2115FA2159CC4E0007CDE5 /* GoodsDetailViewController.h */,
 				6C2115FB2159CC4E0007CDE5 /* GoodsDetailViewController.m */,
+				6C98BF6821781A540083F982 /* UpdateViewController.h */,
+				6C98BF6921781A540083F982 /* UpdateViewController.m */,
+				6C98BF6A21781A540083F982 /* UpdateViewController.xib */,
+				6C98BF6D2178295D0083F982 /* PrivacyAgreementViewController.h */,
+				6C98BF6E2178295D0083F982 /* PrivacyAgreementViewController.m */,
 			);
 			path = public;
 			sourceTree = "<group>";
@@ -337,6 +370,16 @@
 				26F6EDB9216D99990095ECD8 /* SearchHistoryCell.xib */,
 			);
 			path = searchView;
+			sourceTree = "<group>";
+		};
+		6C98BF6221774C320083F982 /* AD(广告) */ = {
+			isa = PBXGroup;
+			children = (
+				6C98BF6521774C450083F982 /* AdvertisingView.h */,
+				6C98BF6421774C450083F982 /* AdvertisingView.m */,
+				6C98BF6321774C440083F982 /* AdvertisingView.xib */,
+			);
+			path = "AD(广告)";
 			sourceTree = "<group>";
 		};
 		6CABCA232149F221008A966F = {
@@ -366,6 +409,7 @@
 				6CABCA8F2149F59B008A966F /* FirstTabbarViewController.m */,
 				6CABCA912149F5A6008A966F /* SecondTabbarViewController.h */,
 				6CABCA922149F5A6008A966F /* SecondTabbarViewController.m */,
+				6C98BF6221774C320083F982 /* AD(广告) */,
 				26F6EDBC2174B2C50095ECD8 /* Pay */,
 				6C2115FD215A09A10007CDE5 /* searchView */,
 				6C2113A7214BB88C0007CDE5 /* public */,
@@ -564,6 +608,9 @@
 				6C2113B72150A1600007CDE5 /* ClassInfoCollectionViewCell.h */,
 				6C2113B82150A1600007CDE5 /* ClassInfoCollectionViewCell.m */,
 				6C2113B92150A1600007CDE5 /* ClassInfoCollectionViewCell.xib */,
+				6C98BF572177248E0083F982 /* ClassInfoTbCell.h */,
+				6C98BF582177248E0083F982 /* ClassInfoTbCell.m */,
+				6C98BF592177248E0083F982 /* ClassInfoTbCell.xib */,
 			);
 			path = classification;
 			sourceTree = "<group>";
@@ -674,11 +721,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C98BF5B2177248E0083F982 /* ClassInfoTbCell.xib in Resources */,
 				6CABCAA62149F863008A966F /* LoignViewController.xib in Resources */,
 				6C2113C82150D43A0007CDE5 /* HomeTitleCell.xib in Resources */,
 				26F6EDBB216D99990095ECD8 /* SearchHistoryCell.xib in Resources */,
 				6C2113C32150CF9B0007CDE5 /* HomeAdCell.xib in Resources */,
+				6C98BF6621774C450083F982 /* AdvertisingView.xib in Resources */,
 				6C2113BB2150A1600007CDE5 /* ClassInfoCollectionViewCell.xib in Resources */,
+				6C98BF6C21781A540083F982 /* UpdateViewController.xib in Resources */,
 				6C2113B3214BBA550007CDE5 /* test1.png in Resources */,
 				6CABCAAC214A3FCA008A966F /* MobileLoignViewController.xib in Resources */,
 				6CABCA392149F221008A966F /* Assets.xcassets in Resources */,
@@ -753,6 +803,7 @@
 				26F6EDC321758CA90095ECD8 /* PaySuccessViewController.m in Sources */,
 				6CABCAC9214A49AE008A966F /* BaseViewController.m in Sources */,
 				6CABCACA214A49AE008A966F /* BaseWebViewController.m in Sources */,
+				6C98BF5E217739520083F982 /* PayingViewController.m in Sources */,
 				6C211601215A09B90007CDE5 /* SearchResultViewController.m in Sources */,
 				6CABCACB214A49AE008A966F /* UIView+JFAViewAnimation.m in Sources */,
 				6CABCACC214A49AE008A966F /* NSString+JFAExtend.m in Sources */,
@@ -763,6 +814,7 @@
 				6C211397214BA8850007CDE5 /* HomePageModel.m in Sources */,
 				6CABCAD0214A49AE008A966F /* NSString+RSA.m in Sources */,
 				6CABCAD1214A49AE008A966F /* NSDate+Utilities.m in Sources */,
+				6C98BF6121773B160083F982 /* OrderViewController.m in Sources */,
 				6CABCAD2214A49AE008A966F /* RSA.m in Sources */,
 				6CABCAD3214A49AE008A966F /* NSDictionary+JFASafeObject.m in Sources */,
 				6CABCAD4214A49AE008A966F /* UIImage+Extension.m in Sources */,
@@ -779,11 +831,14 @@
 				6C2115FC2159CC4E0007CDE5 /* GoodsDetailViewController.m in Sources */,
 				6C2113AB214BB8A90007CDE5 /* PublicGoodsCell.m in Sources */,
 				6C2113B621508D3D0007CDE5 /* BaseLoignViewController.m in Sources */,
+				6C98BF6F2178295D0083F982 /* PrivacyAgreementViewController.m in Sources */,
 				6CABCADB214A49AE008A966F /* NSDate+CustomDate.m in Sources */,
 				6CABCADC214A49AE008A966F /* UINavigationController+CustomNavigationCotroller.m in Sources */,
 				26F6EDBA216D99990095ECD8 /* SearchHistoryCell.m in Sources */,
 				6CABCADD214A49AE008A966F /* UIView+Board.m in Sources */,
+				6C98BF5A2177248E0083F982 /* ClassInfoTbCell.m in Sources */,
 				6C2113BA2150A1600007CDE5 /* ClassInfoCollectionViewCell.m in Sources */,
+				6C98BF6B21781A540083F982 /* UpdateViewController.m in Sources */,
 				6C2113C72150D43A0007CDE5 /* HomeTitleCell.m in Sources */,
 				6CABCADE214A49AE008A966F /* NSString+Password.m in Sources */,
 				6CABCADF214A49AE008A966F /* UIView+LayerCustom.m in Sources */,
@@ -793,6 +848,7 @@
 				6CABCAE2214A49AE008A966F /* BaseCellModel.m in Sources */,
 				6CABCAE3214A49AE008A966F /* EmptyView.m in Sources */,
 				6CABCAE4214A49AE008A966F /* BannerItem.m in Sources */,
+				6C98BF6721774C450083F982 /* AdvertisingView.m in Sources */,
 				6CABCAE5214A49AE008A966F /* ADCarouselView.m in Sources */,
 				6CABCAE6214A49AE008A966F /* ADPageControlView.m in Sources */,
 				6CABCAE7214A49AE008A966F /* BaseSerVice.m in Sources */,
@@ -934,8 +990,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Ximing Gao (J8NFP7U7XV)";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AZ8E9LFA87;
+				DEVELOPMENT_TEAM = EZTXR8U2DA;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -950,7 +1008,7 @@
 					"$(PROJECT_DIR)/LLB/Vende/SDKExport",
 				);
 				PODS_ROOT = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = "-1.LLB";
+				PRODUCT_BUNDLE_IDENTIFIER = com.henan.zainagou;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -962,8 +1020,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Where to buy (Henan) Network Information Technology Co., Ltd. (EZTXR8U2DA)";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AZ8E9LFA87;
+				DEVELOPMENT_TEAM = EZTXR8U2DA;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -978,7 +1038,7 @@
 					"$(PROJECT_DIR)/LLB/Vende/SDKExport",
 				);
 				PODS_ROOT = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = "-1.LLB";
+				PRODUCT_BUNDLE_IDENTIFIER = com.henan.zainagou;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 			};

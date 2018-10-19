@@ -14,6 +14,7 @@
 #import "HomeTitleCell.h"
 #import "GoodsDetailViewController.h"
 #import "SearchResultViewController.h"
+#import "AdvertisingView.h"
 @interface HomePageViewController ()
 <ADCarouselViewDelegate,
 UICollectionViewDelegate,
@@ -37,16 +38,18 @@ UICollectionViewDelegateFlowLayout>
 @implementation HomePageViewController
 {
     ADCarouselView * adCar;
+    AdvertisingView* adv;
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
+    [self showTabbar];
 
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showADV:) name:@"kShowAdcPage" object:nil];
     self.view.backgroundColor = [UIColor redColor];
     [self buildCollectionView];
     [self setRefrshWithCollectionView:self.collectionView];
@@ -63,7 +66,7 @@ UICollectionViewDelegateFlowLayout>
     
     NSMutableDictionary * params =[NSMutableDictionary dictionary];
     [params safeSetObject:@"1" forKey:@"bannerType"];
-    [[BaseSerVice sharedManager]post:@"api/news/querySellerBannerList.do" paramters:params success:^(NSDictionary *dic) {
+    [[BaseSerVice sharedManager]post:@"api/news/querySellerBannerList.do" hiddenHud:NO  paramters:params success:^(NSDictionary *dic) {
         [self.collectionView.mj_header endRefreshing];
 
         NSDictionary * dataDic =[dic safeObjectForKey:@"data"];
@@ -77,7 +80,10 @@ UICollectionViewDelegateFlowLayout>
         [self.titleArray addObjectsFromArray:[dataDic safeObjectForKey:@"juzhengArray"]];
         [self.adArray addObjectsFromArray:[dataDic safeObjectForKey:@"guanggaoArray"]];
 
-        
+        NSArray * tanchuArray =[dataDic safeObjectForKey:@"tanchuArray"];
+        if (tanchuArray.count>0) {
+            [self showAdViewWithDict:tanchuArray[0]];
+        }
         
         
         [self.collectionView reloadData];
@@ -93,7 +99,7 @@ UICollectionViewDelegateFlowLayout>
 ///查看滚动消息
 -(void)getRoldInfo
 {
-    [[BaseSerVice sharedManager]post:@"api/news/queryRollingNewsList.do" paramters:nil success:^(NSDictionary *dic) {
+    [[BaseSerVice sharedManager]post:@"api/news/queryRollingNewsList.do" hiddenHud:YES  paramters:nil success:^(NSDictionary *dic) {
         [self.notifiArray addObjectsFromArray:[[dic safeObjectForKey:@"data"]safeObjectForKey:@"array"]];
         
         
@@ -150,10 +156,10 @@ UICollectionViewDelegateFlowLayout>
     NSMutableDictionary * params =[NSMutableDictionary dictionary];
     [params safeSetObject:[UserModel shareInstance].userId  forKey:@"userId"];
     
-    [[BaseSerVice sharedManager]post:@"api/product/queryProductHotList.do" paramters:nil success:^(NSDictionary *dic) {
+    [[BaseSerVice sharedManager]post:@"api/product/queryProductHotList.do" hiddenHud:NO  paramters:nil success:^(NSDictionary *dic) {
         [self.collectionView.mj_header endRefreshing];
         NSArray * arr =[[dic safeObjectForKey:@"data"]safeObjectForKey:@"array"];
-        
+        [self.dataArray removeAllObjects];
         [self.dataArray addObjectsFromArray:arr];
         [self.collectionView reloadData];
         
@@ -266,7 +272,7 @@ UICollectionViewDelegateFlowLayout>
     if (section ==0) {
         return UIEdgeInsetsMake(10, 10, 10, 10);
     }else
-    return UIEdgeInsetsMake(5, 5, 5, 5);//分别为上、左、下、右
+    return UIEdgeInsetsMake(0, 0, 0, 0);//分别为上、左、下、右
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -310,7 +316,7 @@ UICollectionViewDelegateFlowLayout>
         int goodsCount  = [[dict safeObjectForKey:@"salesAmount"]intValue];
         double vipPrice = [[dict safeObjectForKey:@"vipPrice"]doubleValue];
         NSString * goodPrice = [dict safeObjectForKey:@"productPrice"];
-        int offsetPrice =[[dict safeObjectForKey:@"offsetPrice"]intValue];
+        NSString * offsetPrice =[dict safeObjectForKey:@"offsetPrice"];
         
         
         if (!goodsCount||goodsCount<1) {
@@ -326,7 +332,7 @@ UICollectionViewDelegateFlowLayout>
             cell.secPricelb.hidden = NO;
             cell.secImg.hidden = NO;
         }
-        if (offsetPrice<1) {
+        if ([offsetPrice intValue]<1) {
             cell.quanbgView.hidden  = YES;
             cell.quanlb.hidden = YES;
         }else{
@@ -346,9 +352,9 @@ UICollectionViewDelegateFlowLayout>
         
         
         
-        cell.quanlb.text = [NSString stringWithFormat:@"可抵现%d元",offsetPrice];
+        cell.quanlb.text = [NSString stringWithFormat:@"可抵现%@元",offsetPrice];
         cell.countlb.text = [NSString stringWithFormat:@"已售出%d件",goodsCount];
-        cell.secPricelb.text = [NSString stringWithFormat:@"￥%.1f",vipPrice];
+        cell.secPricelb.text = [NSString stringWithFormat:@"￥%.2f",vipPrice];
         cell.goodstitlelb.text = [dict safeObjectForKey:@"productName"];
         cell.pricelb.text = [NSString stringWithFormat:@"￥%@",goodPrice];
         return cell;
@@ -371,7 +377,7 @@ UICollectionViewDelegateFlowLayout>
         return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2/1.45);
     }
     
-    return CGSizeMake((JFA_SCREEN_WIDTH-20)/2, (JFA_SCREEN_WIDTH-20)/2*0.8+80);
+    return CGSizeMake((JFA_SCREEN_WIDTH-10)/2, (JFA_SCREEN_WIDTH-10)/2+100);
 }
 //这个是两行cell之间的间距（上下行cell的间距）
 
@@ -383,7 +389,7 @@ UICollectionViewDelegateFlowLayout>
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
-    return 5;
+    return 2;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -581,6 +587,29 @@ UICollectionViewDelegateFlowLayout>
     gs.urlStr = [[dic safeObjectForKey:@"pathUrl"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     [self.navigationController pushViewController:gs animated:YES];
 }
+
+
+-(void)showAdViewWithDict:(NSDictionary *)dict
+{
+    if (!adv) {
+        adv = [[[NSBundle mainBundle]loadNibNamed:@"AdvertisingView" owner:nil options:nil]lastObject];
+        adv.frame = self.view.bounds;
+        adv.infoDict =[NSDictionary dictionaryWithDictionary:dict];
+        [self.view addSubview:adv];
+        [self.view bringSubviewToFront:adv];
+        [adv setImageWithUrl:[dict safeObjectForKey:@"imgUrl"]];
+    }
+
+}
+-(void)showADV:(NSNotification *)noti
+{
+    GoodsDetailViewController * de =[[GoodsDetailViewController alloc]init];
+    de.urlStr = [noti.userInfo safeObjectForKey:@"pathUrl"];
+    [self.navigationController pushViewController:de animated:YES];
+}
+
+
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

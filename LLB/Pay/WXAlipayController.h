@@ -9,7 +9,6 @@
 #import "BaseWebViewController.h"
 
 @interface WXAlipayController : BaseWebViewController
-//@property (nonatomic,copy)NSString * urlStr;
 @property (nonatomic,copy)NSString * orderNoUrl;
 
 @end

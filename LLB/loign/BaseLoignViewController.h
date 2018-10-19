@@ -9,6 +9,7 @@
 #import "BaseViewController.h"
 
 @interface BaseLoignViewController : BaseViewController
+@property (nonatomic,copy)NSString * objectStr;
 -(void)getUserInfoWithUserId:(NSString *)userId token:(NSString *)token;
 -(void)didLoignLastWithType:(NSString *)type content:(NSString *)content msm:(NSString *)msm;
 @end

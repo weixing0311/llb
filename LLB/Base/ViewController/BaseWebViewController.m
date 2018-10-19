@@ -19,6 +19,10 @@
 #import "LoignViewController.h"
 #import "WXAlipayController.h"
 #import "PaySuccessViewController.h"
+#import "PayingViewController.h"
+#import "OrderViewController.h"
+#import "FirstTabbarViewController.h"
+#import "GoodsDetailViewController.h"
 @interface BaseWebViewController ()<WKUIDelegate,WKNavigationDelegate,WKScriptMessageHandler,UIGestureRecognizerDelegate,UIScrollViewDelegate>
 @end
 
@@ -30,8 +34,12 @@
     
     
     
+    if ([self.urlStr containsString:@"app/shopCard.html"]||[self.urlStr containsString:@"app/userInfo.html"]) {
+        [self showTabbar];
+    }else{
+        [self hiddenTabbar];
+    }
     
-    //    self.navigationController.navigationBar.hidden = YES;;
 //    [self.webView reload];
 }
 -(void)viewDidDisappear:(BOOL)animated
@@ -44,18 +52,16 @@
 {
     [super viewDidAppear:animated];
 
+
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+
+    
+    
     self.view.backgroundColor = [UIColor greenColor];
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(enterWxPayResult) name:@"refreshWXPayWebView" object:nil];
-    
-    
-    
-//    UIBarButtonItem * backItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back_"] style:UIBarButtonItemStylePlain target:self action:@selector(didClickBack)];
-//    self.navigationItem.leftBarButtonItem = backItem;
+
     if (self.rightBtnUrl.length>0) {
         UIBarButtonItem * rightitem =[[UIBarButtonItem alloc]initWithTitle:self.rightBtnTitle style:UIBarButtonItemStylePlain target:self action:@selector(enterRightPage)];
         self.navigationItem.rightBarButtonItem = rightitem;
@@ -64,12 +70,6 @@
     
     
     
-    //禁止右划返回
-    
-//    if([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
-//
-//        self.navigationController.interactivePopGestureRecognizer.delegate=self;
-//    }
     NSString *jScript = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
     WKUserScript *wkUScript = [[WKUserScript alloc] initWithSource:jScript injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
 
@@ -105,9 +105,7 @@
     
     WKPreferences *preferences = [WKPreferences new];
     preferences.javaScriptCanOpenWindowsAutomatically = YES;
-//    preferences.minimumFontSize = 40.0;
     configuration.preferences = preferences;
-    
     
     
     
@@ -148,7 +146,7 @@
     DLog(@"webUrl = %@",url);
     [self.view addSubview:self.webView];
 
-//    [self buildProgressView];
+    [self buildProgressView];
     
     
     NSURLRequest * request = [NSURLRequest requestWithURL:url];
@@ -190,7 +188,7 @@
 #pragma mark ---progressview
 -(void)buildProgressView
 {
-    self.progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 64, JFA_SCREEN_WIDTH, 2)];
+    self.progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, 2)];
     self.progressView.backgroundColor = [UIColor blueColor];
     //设置进度条的高度，下面这句代码表示进度条的宽度变为原来的1倍，高度变为原来的1.5倍.
     self.progressView.transform = CGAffineTransformMakeScale(1.0f, 1.5f);
@@ -250,7 +248,6 @@
         NSLog(@"%@",dataStr);
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ NSString stringWithFormat:@"alipay://alipayclient/?%@",[self encodeString:dataStr]]]];// 对参数进行urlencode，拼接上scheme。
         
-            
             decisionHandler(WKNavigationActionPolicyAllow);
             return;
         }
@@ -259,61 +256,21 @@
     if ([url containsString:@"weixin://wap/pay?"]) {
         
         if ([[UIApplication sharedApplication]respondsToSelector:@selector(openURL:options:completionHandler:)]) {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url] options:@{UIApplicationOpenURLOptionUniversalLinksOnly: @NO} completionHandler:^(BOOL success) {
-                
-                
-                DLog(@"微信支付返回");
-                
-            }];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url] options:@{UIApplicationOpenURLOptionUniversalLinksOnly: @NO} completionHandler:^(BOOL success) {}];
         } else {
             [[UIApplication sharedApplication]openURL:[NSURL URLWithString:url]];
         }
 
         decisionHandler(WKNavigationActionPolicyAllow);
-        
-        
-        
         return;
     }
-    
-    
-    
-    if([url containsString:@"notify.jsp?"]&&![url containsString:@"https://openapi.alipay.com/gateway.do"] )//支付成功回调
-    {
-        NSDictionary * urlDict = [self getURLParameters:url];
+    if ([url containsString:@"app/shopCard.html"]||[url containsString:@"app/userInfo.html"]) {
+        [self showTabbar];
+    }else{
+        [self hiddenTabbar];
         
-        int orderType = [[urlDict safeObjectForKey:@"orderType"]intValue];
-        orderType=3;
-        
-        
-//        PaySuccessViewController * pas = [[PaySuccessViewController alloc]init];
-//        pas.orderType = orderType;
-//        pas.paySuccess = YES;
-//        [self.navigationController pushViewController:pas animated:YES];
-        
-        decisionHandler(WKNavigationActionPolicyAllow);
-        
-        return;
     }
-    if([url containsString:@"notifyFail.jsp?"])//支付失败回调
-    {
-        NSDictionary * urlDict = [self getURLParameters:url];
-        
-        int orderType = [[urlDict safeObjectForKey:@"orderType"]intValue];
-        orderType=3;
-        
-//        PaySuccessViewController * pas = [[PaySuccessViewController alloc]init];
-//        pas.orderType = orderType;
-//        pas.paySuccess = NO;
-//        [self.navigationController pushViewController:pas animated:YES];
-        
-        decisionHandler(WKNavigationActionPolicyAllow);
-        
-        return;
-    }
-    
-   
-    
+
     decisionHandler(WKNavigationActionPolicyAllow);
 }
 
@@ -422,7 +379,7 @@
     [self.view bringSubviewToFront:self.progressView];
     
     
-    [self showTabbarWithUrl:webView.URL.absoluteString];
+//    [self showTabbarWithUrl:webView.URL.absoluteString];
     
 }
 
@@ -501,10 +458,9 @@
     }else if([message.name isEqualToString:@"toLogin"])
     {
         
-        DLog(@"message--%@",message);
-        self.loginUrl = message.body;
+        DLog(@"tologinUrl--%@",message.body);
+        [UserModel shareInstance].loginOpenUrl = message.body;
         LoignViewController * lo = [[LoignViewController alloc]init];
-        lo.objectStr = self.objectStr;
         [self presentViewController:lo animated:YES completion:^{
             
         }];
@@ -592,9 +548,26 @@
 }
 -(void)exitToroot:(id)messagee
 {
+    [self.webView stopLoading];
+    
+//    if (self.navigationController.viewControllers.count<2) {
+//        [self.webView goBack];
+//        return;
+//    }
+    
+    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    
+    UIViewController *controller = app.window.rootViewController;
+    
+//    [（SuerTabBarViewController是继承于TabBarViewController的相当于mainViewController）】
+     FirstTabbarViewController *rvc = (FirstTabbarViewController *)controller;
+    
+    [rvc setSelectedIndex:[messagee intValue]-1];//假如要跳转到第四个tabBar那里，因为tabBar默认索引是从0开始的
+    
     [self.navigationController popToRootViewControllerAnimated:YES];
-//    NSArray * arr =self.navigationController.viewControllers;
-//    [self.navigationController popToViewController:arr[0] animated:YES];
+    
+   
+    
 }
 -(void)popToRootWithPage:(int)page
 {
@@ -605,6 +578,7 @@
  *弹窗 alert
  */
 -(void) alert:(NSString * )message{
+    DLog(@"弹窗了 内容----%@",message);
     [[UserModel shareInstance] showInfoWithStatus:message];
     
 }
@@ -631,7 +605,7 @@
 {
 //    [[NSUserDefaults standardUserDefaults]removeObjectForKey:kMyloignInfo];
     [[UserModel shareInstance]removeAllObject];
-    [self.webView goBack];
+    self.navigationController.tabBarController.selectedIndex =0;
 //    [self.navigationController popToRootViewControllerAnimated:YES];
 //    LoignViewController *lo = [[LoignViewController alloc]init];
 //    self.view.window.rootViewController = lo;
@@ -686,89 +660,6 @@
     
 }
 
-/**
- *获取url 中的参数 以字典方式返回
- */
-- (NSMutableDictionary *)getURLParameters:(NSString *)urlStr {
-    
-    // 查找参数
-    NSRange range = [urlStr rangeOfString:@"?"];
-    if (range.location == NSNotFound) {
-        return nil;
-    }
-    
-    // 以字典形式将参数返回
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    
-    // 截取参数
-    NSString *parametersString = [urlStr substringFromIndex:range.location + 1];
-    
-    // 判断参数是单个参数还是多个参数
-    if ([parametersString containsString:@"&"]) {
-        
-        // 多个参数，分割参数
-        NSArray *urlComponents = [parametersString componentsSeparatedByString:@"&"];
-        
-        for (NSString *keyValuePair in urlComponents) {
-            // 生成Key/Value
-            NSArray *pairComponents = [keyValuePair componentsSeparatedByString:@"="];
-            NSString *key = [pairComponents.firstObject stringByRemovingPercentEncoding];
-            NSString *value = [pairComponents.lastObject stringByRemovingPercentEncoding];
-            
-            // Key不能为nil
-            if (key == nil || value == nil) {
-                continue;
-            }
-            
-            id existValue = [params valueForKey:key];
-            
-            if (existValue != nil) {
-                
-                // 已存在的值，生成数组
-                if ([existValue isKindOfClass:[NSArray class]]) {
-                    // 已存在的值生成数组
-                    NSMutableArray *items = [NSMutableArray arrayWithArray:existValue];
-                    [items addObject:value];
-                    
-                    [params setValue:items forKey:key];
-                } else {
-                    
-                    // 非数组
-                    [params setValue:@[existValue, value] forKey:key];
-                }
-                
-            } else {
-                
-                // 设置值
-                [params setValue:value forKey:key];
-            }
-        }
-    } else {
-        // 单个参数
-        
-        // 生成Key/Value
-        NSArray *pairComponents = [parametersString componentsSeparatedByString:@"="];
-        
-        // 只有一个参数，没有值
-        if (pairComponents.count == 1) {
-            return nil;
-        }
-        
-        // 分隔值
-        NSString *key = [pairComponents.firstObject stringByRemovingPercentEncoding];
-        NSString *value = [pairComponents.lastObject stringByRemovingPercentEncoding];
-        
-        // Key不能为nil
-        if (key == nil || value == nil) {
-            return nil;
-        }
-        
-        // 设置值
-        [params setValue:value forKey:key];
-    }
-    
-    return params;
-}
 
 
 
@@ -861,25 +752,25 @@
 //    platform 支付平台 1 支付宝 2 微信 3 银联
 //    url 支付地址
 //    payFlag 1 需要支付完成需要跳转 2 不需要
-//    orderType 1 代表下单 2 代表充值
+//    orderType 1 代表下单 2 代理 3欢乐豆 ---2跳个人中心
 //    orderUrl 配合payFlag使用 在payFlag为1的情况下需要
 //    payFlag 与 orderUrl场景说明：在支付完成之后需要跳转到订单页面
     
 
     NSString * platform = [infoDict safeObjectForKey:@"platform"];
     NSString * url = [infoDict safeObjectForKey:@"url"];
-//    NSString * payFlag = [infoDict safeObjectForKey:@"payFlag"];
-//    NSString * orderType = [infoDict safeObjectForKey:@"orderType"];
+    NSString * payFlag = [infoDict safeObjectForKey:@"payFlag"];
+    NSString * orderType = [infoDict safeObjectForKey:@"orderType"];
     self.wxPayCallBackUrl = [infoDict safeObjectForKey:@"redirectUri"];
     self.orderUrl = [infoDict safeObjectForKey:@"orderUrl"];
 
     
     
-    BaseWebViewController * web = [[BaseWebViewController alloc]init];
-    web.title  = @"";
+    PayingViewController * web = [[PayingViewController alloc]init];
     web.urlStr = url;
     web.wxPayCallBackUrl = self.wxPayCallBackUrl;
     web.orderUrl = self.orderUrl;
+    web.orderType =orderType;
     [self.navigationController pushViewController:web animated:YES];
 
     
@@ -889,29 +780,18 @@
 {
     
     DLog(@"payCallBack ---%@",infoDict);
-    BaseWebViewController  * pay =[[BaseWebViewController alloc]init];
-    pay.urlStr =self.orderUrl;
-    [self.navigationController pushViewController:pay animated:YES];
-}
-
--(void)showTabbarWithUrl:(NSString *)url
-{
     
+    if ([self.orderType isEqualToString:@"2"]) {
+        [self exitToroot:@"4"];
+    }else{
+        OrderViewController  * pay =[[OrderViewController alloc]init];
+        pay.urlStr =self.orderUrl;
+        [self.navigationController pushViewController:pay animated:YES];
+    }    
 }
--(void)enterWxPayResult
-{
-    if ([self.urlStr isEqualToString:self.wxPayCallBackUrl]) {
-        return;
-    }
-    DLog(@"调用次数------------------------------------------------%@",self.orderUrl);
 
-    BaseWebViewController  * pay =[[BaseWebViewController alloc]init];
-    pay.urlStr =self.wxPayCallBackUrl;
-    pay.wxPayCallBackUrl = self.wxPayCallBackUrl;
-    pay.orderUrl = self.orderUrl;
-    [self.navigationController pushViewController:pay animated:YES];
 
-}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

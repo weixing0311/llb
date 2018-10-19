@@ -20,6 +20,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    
+    
     HomePageViewController * hp = [[HomePageViewController alloc]init];
     
     //    health = [[HealthViewController alloc]init];
@@ -75,25 +78,22 @@
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController*)viewController{
     NSLog(@"viewcontoller===%@",viewController.childViewControllers);
     
+    
+    
+    
     if(([[viewController.childViewControllers objectAtIndex:0]isKindOfClass:[ShopCarViewController class]]||[[viewController.childViewControllers objectAtIndex:0]isKindOfClass:[MineViewController class]])&&[UserModel shareInstance].token.length<1)
         
     {
         LoignViewController * lo = [[LoignViewController alloc]init];
-        [self presentViewController:lo animated:YES completion:nil];
+        UINavigationController *  nav = [[UINavigationController alloc]initWithRootViewController:lo];
+
+        [self presentViewController:nav animated:YES completion:nil];
         return NO;
         
     }
     
     return YES;
 }
-
-
-
-
-
-
-
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

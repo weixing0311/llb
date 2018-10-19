@@ -56,6 +56,7 @@
     return [AFHTTPRequestSerializer serializer];
 }
 -(NSURLSessionTask*)post:(NSString*)url
+               hiddenHud:(BOOL)hudHidden
                paramters:(NSMutableDictionary *)paramters
                  success:(requestSuccessBlock)success
                  failure:(requestFailureBlock)failure
@@ -102,7 +103,9 @@
                 }else{
                     
                     NSError * error = [[NSError alloc]initWithDomain:NSURLErrorDomain code:[[dic objectForKey:@"code"]intValue] userInfo:dic];
-                    [[UserModel shareInstance]showInfoWithStatus:[dic objectForKey:@"message"]];
+                    if (hudHidden !=YES) {
+                        [[UserModel shareInstance]showInfoWithStatus:[dic objectForKey:@"message"]];
+                    }
 
                     failure(error);
                 }

@@ -33,6 +33,10 @@
 @property (nonatomic,copy) NSString * isPerfect;
 
 
+@property (nonatomic,copy) NSString * loginOpenUrl;
+
+-(void)getUpdateInfo;
+
 
 
 -(void)writeToDoc;

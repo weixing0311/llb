@@ -10,6 +10,7 @@
 #import "ClassInofoModel.h"
 #import "ClassInfoCollectionViewCell.h"
 #import "GoodsDetailViewController.h"
+#import "ClassInfoTbCell.h"
 @interface ClassIficationViewController ()
 <UITableViewDelegate,
 UITableViewDataSource,
@@ -25,7 +26,7 @@ UICollectionViewDelegateFlowLayout>
 @property (nonatomic,strong)   NSMutableArray * sectionArray;
 @property (nonatomic,strong)   NSMutableArray * brandArray;
 @property (nonatomic,assign)   int  page;
-
+@property (nonatomic,assign)   NSInteger  selectNum;
 @end
 
 @implementation ClassIficationViewController
@@ -33,10 +34,18 @@ UICollectionViewDelegateFlowLayout>
     NSString * classId;
     NSInteger page;
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+
+    [self showTabbar];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     page =1;
+    _selectNum = 0;
     // Do any additional setup after loading the view.
     [self classtb];
     [self buildCollectionView];
@@ -67,7 +76,7 @@ UICollectionViewDelegateFlowLayout>
 }
 -(void)getClassInfo
 {
-    [[BaseSerVice sharedManager]post:@"api/product/queryOneClassList.do" paramters:nil success:^(NSDictionary *dic) {
+    [[BaseSerVice sharedManager]post:@"api/product/queryOneClassList.do" hiddenHud:NO  paramters:nil success:^(NSDictionary *dic) {
         NSDictionary * dataDict =[dic safeObjectForKey:@"data"];
         _classArr = [dataDict safeObjectForKey:@"array"];
         
@@ -88,7 +97,7 @@ UICollectionViewDelegateFlowLayout>
 {
     NSMutableDictionary * params =[NSMutableDictionary dictionary];
     [params safeSetObject:classId forKey:@"classId"];
-    [[BaseSerVice sharedManager]post:@"api/product/queryTweClassList.do" paramters:params success:^(NSDictionary *dic) {
+    [[BaseSerVice sharedManager]post:@"api/product/queryTweClassList.do" hiddenHud:NO  paramters:params success:^(NSDictionary *dic) {
         
         
         [self.collectionView.mj_header endRefreshing];
@@ -111,7 +120,7 @@ UICollectionViewDelegateFlowLayout>
 //获取品牌
 -(void)getbrand
 {
-    [[BaseSerVice sharedManager]post:@"api/product/queryBrandList.do" paramters:nil success:^(NSDictionary *dic) {
+    [[BaseSerVice sharedManager]post:@"api/product/queryBrandList.do" hiddenHud:NO  paramters:nil success:^(NSDictionary *dic) {
         NSDictionary * dataDict =[dic safeObjectForKey:@"data"];
         _brandArray = [dataDict safeObjectForKey:@"brandArray"];
         
@@ -139,18 +148,31 @@ UICollectionViewDelegateFlowLayout>
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString * identifier  =@"classCell";
-    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+//    static NSString * identifier  =@"classCell";
+    ClassInfoTbCell * cell = [tableView cellForRowAtIndexPath:indexPath];;
     if (!cell) {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[[NSBundle mainBundle] loadNibNamed:@"ClassInfoTbCell" owner:self options:0] objectAtIndex:0];
+    }
+    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+    
+    if (indexPath.row ==_selectNum) {
+        cell.redView.hidden = NO;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.textlb.font = [UIFont boldSystemFontOfSize:16];
+        cell.textlb.textColor = HEXCOLOR(0x000000);
+
+    }else{
+        cell.redView.hidden = YES;
+        cell.backgroundColor = HEXCOLOR(0xeeeeee);
+        cell.textlb.font = [UIFont systemFontOfSize:14];
+        cell.textlb.textColor = HEXCOLOR(0x666666);
+
     }
     
     NSDictionary * dic = [self.classArr objectAtIndex:indexPath.row];
-    cell.textLabel.text = [dic safeObjectForKey:@"className"];
-    cell.textLabel.textAlignment = NSTextAlignmentCenter;
-    cell.textLabel.font = [UIFont systemFontOfSize:13];
-    cell.textLabel.textColor = HEXCOLOR(0x666666);
-    cell.textLabel.adjustsFontSizeToFitWidth = YES;
+    cell.textlb.text = [dic safeObjectForKey:@"className"];
+    cell.textlb.textAlignment = NSTextAlignmentCenter;
+    cell.textlb.adjustsFontSizeToFitWidth = YES;
     return cell;
 }
 
@@ -159,7 +181,9 @@ UICollectionViewDelegateFlowLayout>
 //    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     NSDictionary * dict =[_classArr objectAtIndex:indexPath.row];
+    _selectNum = indexPath.row;
     classId = [dict safeObjectForKey:@"id"];
+    [_classtb reloadData];
     [self getDataInfo];
 }
 
@@ -247,6 +271,14 @@ UICollectionViewDelegateFlowLayout>
     }
 
 }
+-(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
+{
+    if (section ==0) {
+        return CGSizeMake(JFA_SCREEN_WIDTH-70, (JFA_SCREEN_WIDTH-70)/2.94+20);
+    }else{
+        return CGSizeMake(JFA_SCREEN_WIDTH-70, 40);
+    }
+}
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 
 {
@@ -257,20 +289,33 @@ UICollectionViewDelegateFlowLayout>
 //        NSDictionary * dic = [self.dataArray objectAtIndex:indexPath.section];
 //
 //        //添加头视图的内容
-        UIView*view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, 40)];
-        view.backgroundColor = [UIColor whiteColor];
-        UIView * lineView =[[UIView alloc]initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, 5)];
-        lineView.backgroundColor = HEXCOLOR(0xeeeeee);
-        [view addSubview:lineView];
+        for (UIView *view in [header subviews]) {
+            [view removeFromSuperview];
+        }
 
-        UILabel*titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 40)];
-        titleLabel.text = indexPath.section==1?@"品牌":@"";
-        titleLabel.font = [UIFont systemFontOfSize:14];
-        titleLabel.textColor = HEXCOLOR(0x666666);
-        [view addSubview:titleLabel];
+        if (indexPath.section ==0) {
+            UIImageView * imageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH-70, (JFA_SCREEN_WIDTH-70)/2.94)];
+            imageView.image = getImage(@"classHeader_");
+            [header addSubview:imageView];
+        }else{
+            UIView*view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, 40)];
+            view.backgroundColor = [UIColor whiteColor];
+            UIView * lineView =[[UIView alloc]initWithFrame:CGRectMake(0, 0, JFA_SCREEN_WIDTH, 5)];
+            lineView.backgroundColor = HEXCOLOR(0xeeeeee);
+            [view addSubview:lineView];
+            
+            UILabel*titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 40)];
+            titleLabel.text = indexPath.section==1?@"大牌推荐":@"";
+            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.textColor = HEXCOLOR(0x666666);
+            [view addSubview:titleLabel];
+            
+            //头视图添加view
+            [header addSubview:view];
 
-        //头视图添加view
-        [header addSubview:view];
+        }
+        
+        
         return header;
     }
     //如果底部视图
@@ -352,7 +397,10 @@ UICollectionViewDelegateFlowLayout>
         _classtb.delegate = self;
         _classtb.dataSource =self;
         _classtb.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _classtb.backgroundColor = HEXCOLOR(0xeeeeee);
+        _classtb.separatorColor = HEXCOLOR(0xeeeeee);
         [self.view addSubview:_classtb];
+        [self setExtraCellLineHiddenWithTb:_classtb];
     }
     return _classtb;
 }
@@ -372,6 +420,12 @@ UICollectionViewDelegateFlowLayout>
     return _brandArray;
 }
 
+-(void)setExtraCellLineHiddenWithTb:(UITableView *)tb
+{
+    UIView *view =[[UIView alloc]init];
+    view.backgroundColor = HEXCOLOR(0xeeeeee);
+    [tb setTableFooterView:view];
+}
 
 
 - (void)didReceiveMemoryWarning {

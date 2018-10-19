@@ -10,6 +10,7 @@
 #import "LoignViewController.h"
 #import "FirstTabbarViewController.h"
 #import "PaySuccessViewController.h"
+#import "UpdateViewController.h"
 @interface AppDelegate ()<WXApiDelegate>
 
 @end
@@ -34,12 +35,11 @@
     }
     [[UserModel shareInstance]readToDoc];
     
-    
+    [[UserModel shareInstance]getUpdateInfo];
     FirstTabbarViewController * fs =[[FirstTabbarViewController alloc]init];
     [self.window setRootViewController:fs];
 
 
-    
 
     
     return YES;
@@ -97,6 +97,46 @@
         }
     }
 }
+
+
+-(void)showUpdateAlertViewWithMessage:(NSString *)message
+{
+    
+    UpdateViewController * up = [[UpdateViewController alloc]init];
+    
+    [self.window.rootViewController addChildViewController:up];
+    [up didMoveToParentViewController:self.window.rootViewController];
+    up.view.frame = CGRectMake(0, 0, JFA_SCREEN_WIDTH, JFA_SCREEN_HEIGHT);
+    up.contentTextView.text = message;
+    [self.window.rootViewController.view addSubview:up.view];
+
+    
+//    if ([UserModel shareInstance].isUpdate==YES) {
+//
+//        UIAlertController * la =[UIAlertController alertControllerWithTitle:@"有新版本需要更新" message:[UserModel shareInstance].updateMessage preferredStyle:UIAlertControllerStyleAlert];
+//
+//        [la addAction:[UIAlertAction actionWithTitle:@"跳转到AppStore" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//            [[UIApplication sharedApplication ] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/cn/app/id1209417912"]];
+//        }]];
+//
+//        if ([UserModel shareInstance].isForce==0) {
+//            [la addAction:[UIAlertAction actionWithTitle:@"忽略" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//                [UserModel shareInstance].ignoreVerSion = [UserModel shareInstance].upDataVersion;
+//                [[NSUserDefaults standardUserDefaults]setObject:@([UserModel shareInstance].ignoreVerSion) forKey:@"ignoreVerSion"];
+//
+//                [UserModel shareInstance].isUpdate =NO;
+//            }]];
+//        }
+//
+//        [self.window.rootViewController presentViewController:la animated:YES completion:nil];
+//
+//    }
+    
+}
+
+
+
+
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.

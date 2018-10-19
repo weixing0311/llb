@@ -20,4 +20,7 @@
 -(NSString*)DataTOjsonString:(id)object;
 //字典转model
 -(NSMutableArray *)getModelWithArray:(NSArray *)infoArr model:(NSString *)modelStr;
+-(void)showTabbar;
+-(void)hiddenTabbar;
+- (NSMutableDictionary *)getURLParameters:(NSString *)urlStr ;
 @end

@@ -10,5 +10,7 @@
 #import "BaseLoignViewController.h"
 
 @interface MobileLoignViewController : BaseLoignViewController
+@property (nonatomic,assign)BOOL isLogin;
+@property (nonatomic,strong)NSDictionary  * loginInfoDict;
 
 @end

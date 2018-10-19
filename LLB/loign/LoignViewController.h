@@ -9,5 +9,4 @@
 #import <UIKit/UIKit.h>
 #import "BaseLoignViewController.h"
 @interface LoignViewController : BaseLoignViewController
-@property (nonatomic,copy)NSString * objectStr;
 @end

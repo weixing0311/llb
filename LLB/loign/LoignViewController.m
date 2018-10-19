@@ -16,6 +16,12 @@
 @end
 
 @implementation LoignViewController
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -65,7 +71,6 @@
 //        NSString * openid = [dic safeObjectForKey:@"openid"];
         
         NSString * content = [self DataTOjsonString:dic];
-        
         [self didLoignLastWithType:@"2" content:content msm:nil];
         
     } failure:^(NSError *error) {
@@ -79,9 +84,8 @@
     UIAlertController * al = [UIAlertController alertControllerWithTitle:@"" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
     [al addAction:[UIAlertAction actionWithTitle:@"手机号登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         MobileLoignViewController * mb =[[MobileLoignViewController alloc]init];
-        [self presentViewController:mb animated:YES completion:^{
-            
-        }];
+        mb.isLogin =YES;
+        [self.navigationController pushViewController:mb animated:YES];
     }]];
     [al addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:al animated:YES completion:^{
@@ -96,6 +100,7 @@
     }];
 }
 - (IBAction)agreement:(id)sender {
+    
     AgreeMentViewController * ag =[[AgreeMentViewController alloc]init];
     ag.urlStr = @"app/AgreementList.html";
     [self.navigationController pushViewController:ag animated:YES];

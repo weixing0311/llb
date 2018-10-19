@@ -19,6 +19,13 @@
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loginSuccessJump" object:nil];
+}
+
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -27,7 +34,8 @@
     
     
     
-    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(pushOpenUrl:) name:@"loginSuccessJump" object:nil];
+
 }
 -(void)popToRootWithPage:(int)page
 {
@@ -35,6 +43,18 @@
         self.tabBarController.selectedIndex = page-1;
 
 }
+
+
+-(void)pushOpenUrl:(NSNotification *)noti
+{
+    GoodsDetailViewController * de =[[GoodsDetailViewController alloc]init];
+    de.urlStr = [UserModel shareInstance].loginOpenUrl;
+    [UserModel shareInstance].loginOpenUrl = @"";
+    de.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:de animated:YES];
+}
+
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

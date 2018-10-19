@@ -15,6 +15,7 @@
     self.buyBtn.layer.borderWidth = 1;
     self.buyBtn.layer.borderColor = [UIColor redColor].CGColor;
     [self.contentView bringSubviewToFront:self.quanlb];
+    self.quanlb.adjustsFontSizeToFitWidth = YES;
     // Initialization code
 }
 
